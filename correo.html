@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gestor de Gmail · Amable PC</title>
+<meta name="theme-color" content="#0f172a">
+<link rel="icon" href="icon-192.png">
+<style>
+  :root { --bg: #0f172a; --card: #1E293B; --line: #334155; --txt: #F8FAFC; --mut: #94A3B8; --soft: #CBD5E1; --acc: #A78BFA; --ok: #4ADE80; --warn: #FACC15; --bad: #F87171; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--txt); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body { padding: 0 16px 40px; }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  header { display: flex; align-items: center; gap: 12px; padding: 14px 0 6px; }
+  header h1 { flex: 1; text-align: center; font-size: 22px; margin: 0; color: var(--acc); }
+  .back { color: #0F172A; background: var(--acc); text-decoration: none; font-weight: 700; font-size: 14px; padding: 8px 14px; border-radius: 999px; }
+  .ver { color: #64748b; font-size: 12px; }
+  .card { background: var(--card); border: 1px solid rgba(248,250,252,0.06); border-radius: 20px; padding: 18px; margin-top: 14px; }
+  .card h2 { font-size: 17px; margin: 0 0 8px; }
+  p { line-height: 1.5; color: var(--soft); margin: 8px 0; }
+  .big { font-size: 18px; color: var(--txt); }
+  .hint { color: var(--mut); font-size: 13px; line-height: 1.45; }
+  button { font: inherit; cursor: pointer; border-radius: 14px; border: 0; padding: 12px 16px; font-weight: 700; }
+  .btn { background: var(--acc); color: #0F172A; width: 100%; font-size: 16px; }
+  .btn2 { background: transparent; color: var(--soft); border: 1px solid var(--line); width: 100%; margin-top: 8px; }
+  .btn-sm { background: transparent; color: var(--soft); border: 1px solid var(--line); padding: 6px 12px; font-size: 13px; border-radius: 999px; font-weight: 600; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tabs { display: flex; gap: 6px; margin-top: 14px; }
+  .tab { flex: 1; background: var(--card); color: var(--soft); border: 1px solid var(--line); padding: 10px 6px; font-size: 14px; border-radius: 12px; }
+  .tab.on { background: var(--acc); color: #0F172A; border-color: var(--acc); }
+  .sug { display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: start; padding: 12px 0; border-top: 1px solid var(--line); }
+  .sug:first-of-type { border-top: 0; }
+  .sug input[type=checkbox] { width: 22px; height: 22px; margin-top: 4px; accent-color: var(--acc); }
+  .sug input[type=text] { width: 100%; background: #0f172a; color: var(--txt); border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; font: inherit; font-weight: 700; }
+  .sug .n { color: var(--acc); font-weight: 800; white-space: nowrap; margin-top: 8px; }
+  .ex { color: var(--mut); font-size: 12.5px; margin-top: 4px; line-height: 1.35; }
+  .mail { display: block; text-decoration: none; color: inherit; padding: 10px 0; border-top: 1px solid var(--line); }
+  .mail:first-child { border-top: 0; }
+  .mail b { display: block; color: var(--txt); font-size: 14.5px; }
+  .mail span { color: var(--mut); font-size: 13px; }
+  .tag { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: rgba(167,139,250,0.14); color: #DDD6FE; font-size: 13.5px; margin: 4px 4px 0 0; }
+  .prog { height: 8px; border-radius: 99px; background: rgba(255,255,255,0.1); overflow: hidden; margin-top: 12px; }
+  .prog > div { height: 100%; width: 0; background: var(--acc); transition: width .3s; }
+  .alert { border-left: 4px solid var(--bad); }
+  .muted { color: var(--mut); }
+  .empty { color: var(--mut); font-size: 14px; padding: 6px 0; }
+  .steps { list-style: none; padding: 0; margin: 12px 0 0; counter-reset: s; }
+  .steps li { counter-increment: s; position: relative; padding: 12px 0 12px 44px; border-top: 1px solid var(--line); color: var(--soft); line-height: 1.5; font-size: 14.5px; }
+  .steps li:first-child { border-top: 0; }
+  .steps li::before { content: counter(s); position: absolute; left: 0; top: 12px; width: 30px; height: 30px; border-radius: 50%; background: var(--acc); color: #0F172A; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .steps b { color: var(--txt); }
+  .steps li .sh { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--txt); min-height: 30px; cursor: pointer; font-size: 15.5px; }
+  .steps li.cur .sh { cursor: default; color: #fff; }
+  .steps li .sb { display: none; margin-top: 6px; }
+  .steps li.cur .sb, .steps li.open .sb { display: block; }
+  .steps li.todo { opacity: 0.6; }
+  .steps li.done .stt { text-decoration: line-through; color: var(--mut); }
+  .steps li.done::before { content: "✓"; background: var(--ok); }
+  .steps li.cur { background: rgba(167,139,250,0.09); border-radius: 14px; margin: 6px -8px; padding-left: 52px; padding-right: 8px; border-top: 0; }
+  .steps li.cur::before { left: 8px; box-shadow: 0 0 0 4px rgba(167,139,250,0.3); }
+  .steps li .sum { color: var(--mut); font-size: 13px; margin-top: 2px; }
+  .steps li.open .sum { display: none; }
+  .okk { color: var(--ok); font-size: 12.5px; font-weight: 600; }
+  .didit { width: 100%; margin-top: 12px; background: transparent; color: var(--acc); border: 2px dashed var(--acc); padding: 11px 14px; font-size: 15px; }
+  .setup-note { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(250,204,21,0.12); border: 1px solid rgba(250,204,21,0.5); color: #FDE68A; font-size: 14px; line-height: 1.45; }
+  .setup-note b { color: #FFFBEB; }
+  .setup-prog { margin-top: 10px; color: var(--acc); font-weight: 700; font-size: 14px; }
+  .steps a.go { display: inline-block; margin-top: 8px; padding: 8px 14px; border-radius: 999px; background: rgba(167,139,250,0.16); border: 1px solid rgba(167,139,250,0.55); color: #DDD6FE; text-decoration: none; font-weight: 700; font-size: 14px; }
+  .steps a.go:hover { background: rgba(167,139,250,0.3); }
+  .steps code { background: #0f172a; border: 1px solid var(--line); border-radius: 8px; padding: 2px 8px; color: var(--ok); font-size: 13px; word-break: break-all; }
+  .steps .ask { margin-top: 6px; color: var(--mut); font-size: 13px; }
+  .cid { width: 100%; background: #0f172a; color: var(--txt); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font: inherit; font-size: 14px; margin-top: 8px; }
+  .demo { background: rgba(250,204,21,0.12); border: 1px solid rgba(250,204,21,0.5); color: #FDE68A; border-radius: 12px; padding: 8px 12px; font-size: 13px; margin-top: 10px; }
+  label.chk { display: flex; gap: 10px; align-items: center; color: var(--soft); margin-top: 10px; }
+  label.chk input { width: 20px; height: 20px; accent-color: var(--acc); }
+  .hidden { display: none !important; }
+  .how-btn { display: block; width: 100%; margin: 0 0 12px; padding: 0.8rem; border-radius: 14px; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.5); color: #7DD3FC; font-weight: 800; font-size: 15px; cursor: pointer; }
+  .how-list { margin: 10px 0 0; padding-left: 1.1rem; line-height: 1.5; }
+  .how-list li { margin-bottom: 7px; }
+  .guia { background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.45); border-radius: 12px; padding: 10px 12px; margin: 10px 0; font-size: 0.92rem; }
+  .guia ol { margin: 6px 0 6px; padding-left: 1.2rem; line-height: 1.5; }
+  .guia li { margin-bottom: 6px; }
+  .fn { background: var(--card); border: 1px solid var(--line); border-radius: 18px; margin-top: 12px; }
+  .fn > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
+  .fn > summary::-webkit-details-marker { display: none; }
+  .fn > summary::after { content: 'Ver ▾'; color: var(--acc); font-weight: 800; font-size: 13px; white-space: nowrap; }
+  .fn[open] > summary::after { content: 'Cerrar ▴'; }
+  .fi { font-size: 26px; }
+  .ft { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .ft b { font-size: 16px; color: var(--txt); }
+  .ft small { color: var(--mut); font-size: 13px; line-height: 1.4; }
+  .fbadge { background: var(--acc); color: #0F172A; font-weight: 800; border-radius: 999px; padding: 2px 9px; font-size: 13px; }
+  .fb { padding: 0 16px 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><a class="back" href="./#home">← Inicio</a><h1>✉️ Gestor de Gmail</h1><span class="ver" id="ver"></span></header>
+  <button class="how-btn" id="howBtn">ℹ️ Cómo funciona</button>
+  <div class="card hidden" id="howBox">
+    <p class="big">Este gestor es <b>solo para Gmail</b> (cuentas @gmail.com y de Google Workspace). Si tu correo es de Outlook, Yahoo u otro, no puede usarlo.</p>
+    <ul class="how-list">
+      <li>Pulsa <b>Conectar mi Gmail</b>: Google te pregunta qué cuenta quieres usar y te pide permiso.</li>
+      <li>Repasa <b>solo tu bandeja de entrada</b> de los últimos 3 meses y te propone 5 etiquetas. Tú eliges cuáles quieres.</li>
+      <li>Te muestra los <b>correos urgentes</b> y los que traen <b>facturas y documentos</b>.</li>
+      <li>Todo se hace en tu navegador: tus correos no se guardan en ningún servidor. Puedes desconectarlo cuando quieras.</li>
+      <li>Se usa mejor desde el ordenador.</li>
+    </ul>
+  </div>
+  <div id="app"></div>
+</div>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+// Gestor de email de PC & Body-mind (fase 2): todo pasa en el navegador del usuario.
+// Gmail se conecta con el permiso de Google del propio usuario; no hay servidor ni se guardan correos fuera.
+const VERSION = 'v2.58';
+// ID de cliente de Google (no es secreto). Lo crea Gustavo en Google Cloud: ver instrucciones.
+// Se pega una sola vez en la guía de configuración de esta página y queda guardado en este navegador.
+// ID de cliente común de Amable PC (proyecto «Amable PC» de Google Cloud, sin verificar: unas 100 personas). Quien ya pegó el suyo sigue con el suyo.
+const COMMON_CID = '907469278874-eqhisv2ns3is2rpi4l7p2eopb019l4ms.apps.googleusercontent.com';
+const ownCid = () => { try { return !!localStorage.getItem('pcbm_correo_cid'); } catch (e) { return false; } };
+let GOOGLE_CLIENT_ID = (() => { try { return (localStorage.getItem('pcbm_correo_cid') || '').trim() || COMMON_CID; } catch (e) { return COMMON_CID; } })();
+const SCOPES = 'https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.settings.basic';
+const API = 'https://gmail.googleapis.com/gmail/v1/users/me/';
+const DEMO = new URLSearchParams(location.search).has('demo');
+const KEY = 'pcbm_correo_v1';
+const $ = id => document.getElementById(id);
+const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+document.getElementById('ver').textContent = VERSION;
+
+// Temas que se buscan para sugerir etiquetas (búsqueda de Gmail)
+const TOPICS = [
+  { name: 'Facturas y pagos', q: '(factura OR facturas OR invoice OR recibo OR "justificante de pago" OR "comprobante de pago")' },
+  { name: 'Compras y envíos', q: '(pedido OR envío OR "en reparto" OR shipped OR tracking OR "número de seguimiento")' },
+  { name: 'Bancos y finanzas', q: '(transferencia OR extracto OR bizum OR "cargo en tu cuenta" OR "movimiento en tu cuenta" OR "tu banco")' },
+  { name: 'Redes sociales', q: 'from:(facebookmail.com OR instagram.com OR linkedin.com OR x.com OR twitter.com OR tiktok.com OR youtube.com OR pinterest.com)' },
+  { name: 'Boletines y novedades', q: '(unsubscribe OR "darse de baja" OR "darte de baja" OR "cancelar la suscripción" OR newsletter)' },
+  { name: 'Viajes y reservas', q: '(reserva OR vuelo OR hotel OR booking OR billete OR "check-in" OR renfe OR ryanair OR airbnb)' },
+  { name: 'Citas y reuniones', q: '(cita OR reunión OR invitación OR "zoom.us" OR "meet.google.com" OR "teams.microsoft.com")' },
+  { name: 'Formación y cursos', q: '(curso OR webinar OR formación OR taller OR masterclass)' },
+  { name: 'Seguridad y accesos', q: '("código de verificación" OR "verification code" OR contraseña OR "inicio de sesión" OR "nuevo dispositivo" OR "security alert")' },
+  { name: 'Salud', q: '("cita médica" OR clínica OR farmacia OR receta OR hospital OR "resultados de")' }
+];
+// Todo se busca solo en la bandeja de entrada (in:inbox) y nunca en lo que has enviado (-in:sent)
+const SCAN_V = 3; // sube cuando cambia lo que se busca: obliga a repasar de nuevo
+const URGENT_Q = 'in:inbox -in:sent newer_than:3d is:unread (urgente OR urgent OR "lo antes posible" OR asap OR "último aviso" OR "ultimo aviso" OR vence OR "fecha límite" OR "plazo" OR inmediato OR "cuanto antes")';
+const FACT_Q = 'in:inbox -in:sent has:attachment newer_than:60d (factura OR invoice OR recibo)';
+const DOCS_Q = 'in:inbox -in:sent has:attachment newer_than:30d (filename:pdf OR filename:doc OR filename:docx OR filename:xls OR filename:xlsx OR filename:ppt OR filename:pptx) -factura -invoice -recibo';
+
+let st = load(), token = null, tokenExp = 0, tokenClient = null, tab = '', busy = false;
+function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+const today = () => new Date().toISOString().slice(0, 10);
+document.getElementById('howBtn').onclick = () => { document.getElementById('howBox').classList.toggle('hidden'); };
+// Email de la cuenta de Amable PC: si es de Gmail, Google lo ofrece primero al conectar (se pide al abrir, para no perder el toque del botón)
+let cuentaMail = '';
+(async () => {
+  try {
+    const t = localStorage.getItem('pcbm_token'); if (!t) return;
+    const r = await fetch('https://amable-pc-api.proud-hill-016b.workers.dev/yo', { headers: { Authorization: 'Bearer ' + t } });
+    const d = await r.json(); if (/@(gmail|googlemail)\.com$/i.test(d.correo || '')) cuentaMail = d.correo;
+  } catch (e) {}
+})();
+
+// ---------- Conexión con Google ----------
+function getToken() {
+  if (DEMO) { token = 'demo'; tokenExp = Date.now() + 3600e3; return Promise.resolve(token); }
+  if (token && Date.now() < tokenExp - 60e3) return Promise.resolve(token);
+  return new Promise((resolve, reject) => {
+    if (!GOOGLE_CLIENT_ID) return reject(new Error('Falta la configuración con Google: sigue la guía de esta página.'));
+    if (!window.google || !google.accounts || !google.accounts.oauth2) return reject(new Error('No ha cargado la conexión de Google. Revisa internet y vuelve a intentarlo.'));
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID, scope: SCOPES, hint: st.email || cuentaMail || undefined,
+      callback: r => {
+        if (r.error) return reject(new Error(r.error === 'access_denied' ? 'No se ha dado permiso' : r.error));
+        if (!/gmail\.modify/.test(r.scope || '') || !/gmail\.settings\.basic/.test(r.scope || '')) return reject(new Error('Falta marcar los dos permisos. Vuelve a pulsar y marca «Seleccionar todo».'));
+        token = r.access_token; tokenExp = Date.now() + (Number(r.expires_in) || 3600) * 1000; resolve(token);
+      },
+      error_callback: e => reject(new Error(e && e.type === 'popup_closed' ? 'Se cerró la ventana de Google' : 'No se pudo abrir la ventana de Google'))
+    });
+    tokenClient.requestAccessToken({ prompt: st.connected ? '' : 'consent' });
+  });
+}
+async function gm(path, opt = {}) {
+  if (DEMO) return demoApi(path, opt);
+  const t = await getToken();
+  const r = await fetch(API + path, { ...opt, headers: { Authorization: 'Bearer ' + t, 'Content-Type': 'application/json', ...(opt.headers || {}) } });
+  if (r.status === 401) { token = null; throw new Error('La conexión con Google ha caducado: vuelve a pulsar'); }
+  if (!r.ok) { let m = r.status; try { m = (await r.json()).error.message; } catch (e) {} throw new Error('Gmail: ' + m); }
+  return r.status === 204 ? {} : r.json();
+}
+const count = async q => { const r = await gm('messages?maxResults=500&q=' + encodeURIComponent(q)); return { n: (r.messages || []).length >= 500 ? (r.resultSizeEstimate || 500) : (r.messages || []).length, ids: (r.messages || []).map(m => m.id) }; };
+async function headers(id) {
+  const m = await gm('messages/' + id + '?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date');
+  const h = n => ((m.payload && m.payload.headers) || []).find(x => x.name.toLowerCase() === n.toLowerCase());
+  const from = (h('From') && h('From').value || '').replace(/<.*>/, '').replace(/"/g, '').trim();
+  return { id, thread: m.threadId, from, subject: (h('Subject') && h('Subject').value) || '(sin asunto)', date: Number(m.internalDate) || 0 };
+}
+async function listMails(q, max) {
+  const r = await gm('messages?maxResults=' + max + '&q=' + encodeURIComponent(q));
+  const out = [];
+  for (const m of (r.messages || []).slice(0, max)) { try { out.push(await headers(m.id)); } catch (e) {} }
+  return out;
+}
+const openLink = m => 'https://mail.google.com/mail/u/0/#all/' + (m.thread || m.id);
+const fdate = t => t ? new Date(t).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : '';
+
+// ---------- Pantallas ----------
+function render() {
+  const a = $('app');
+  if (!st.connected && !st.scanning) return renderIntro(a);
+  if (st.suggest && !st.labels) return renderSuggest(a);
+  if (!st.labels) return renderScan(a);
+  renderPanel(a);
+}
+// Guía paso a paso para conectar la app con Google (se hace una sola vez, unos 10 minutos).
+// Google no deja saber qué ha hecho el usuario, así que cada paso se marca a mano y se guarda.
+// (clave nueva: al dividir el paso 3 en dos, la numeración de los pasos cambió)
+function setupState() { try { return JSON.parse(localStorage.getItem('pcbm_correo_pasos2')) || []; } catch (e) { return []; } }
+function setupSave(d) { try { localStorage.setItem('pcbm_correo_pasos2', JSON.stringify(d)); } catch (e) {} }
+let setupOpen = -1;
+function renderSetup(a) {
+  const prevCid = ($('cid') && $('cid').value) || '';
+  const G = 'https://console.cloud.google.com/';
+  a.innerHTML = `<div class="card">
+    <h2>🔧 Antes de empezar: conectar la app con Google</h2>
+    <p>Google exige que el dueño de la app cree una «llave» gratuita para poder leer y etiquetar correos. Se hace <b>una sola vez</b> (unos 10 minutos) y <b>no se paga nada</b>. Pulsa cada botón: te lleva directo a la página de Google que toca. Es más cómodo hacerlo <b>desde el ordenador</b>, pero también se puede desde el móvil.</p>
+    <ol class="steps">
+      <li><b>Crea un proyecto.</b> Entra con tu cuenta de Google. Ponle <b>el nombre que quieras</b> (por ejemplo «Correo»; da igual) y pulsa <b>Crear</b>.<br>
+        <a class="go" href="${G}projectcreate" target="_blank" rel="noopener">① Abrir «Crear proyecto» ↗</a></li>
+      <li><b>Activa Gmail.</b> Pulsa el botón azul <b>Habilitar</b>. Si en vez de «Habilitar» pone <b>Administrar</b>, ya estaba activada: sigue con el siguiente paso.
+        <div class="ask">Google usa el proyecto que acabas de crear. En el móvil el nombre del proyecto no se ve arriba: es normal.</div>
+        <a class="go" href="${G}apis/library/gmail.googleapis.com" target="_blank" rel="noopener">② Abrir «Gmail API» ↗</a></li>
+      <li><b>Crea la pantalla de permisos.</b> Es lo que verás tú al dar permiso. Pulsa <b>Comenzar</b> y rellena solo esto:<br>
+        · Nombre de la app: <b>el que quieras</b> (da igual)<br>
+        · Correo de asistencia: el tuyo<br>
+        · Público: <b>Externo</b><br>
+        · Correo de contacto: el tuyo<br>
+        Acepta las condiciones y pulsa <b>Crear</b>.<br>
+        <a class="go" href="${G}apis/credentials/consent" target="_blank" rel="noopener">③ Abrir «Pantalla de permisos» ↗</a></li>
+      <li><b>Añade tu Gmail como usuario de prueba.</b> Así Google te deja usar tu propia app.<br>
+        · Entra en <b>Público</b> (en el menú ☰ de la izquierda; en el móvil, arriba a la izquierda).<br>
+        · Comprueba que pone <b>Prueba</b> (o «Testing»).<br>
+        · En <b>Usuarios de prueba</b> pulsa <b>Add users</b>, escribe <b>tu Gmail</b> y <b>Guardar</b>.<br>
+        <a class="go" href="${G}auth/audience" target="_blank" rel="noopener">④ Abrir «Público» ↗</a></li>
+      <li><b>Crea la llave (ID de cliente).</b> Tipo de aplicación: <b>Aplicación web</b>. Nombre: <b>el que quieras</b> (da igual). Lo <u>único que hay que copiar exacto</u> es esta dirección: en <b>Orígenes de JavaScript autorizados → Añadir URI</b> pégala tal cual (sin barra al final):<br>
+        <code id="origin">https://gcalabro12.github.io</code> <button class="btn-sm" id="copyOrigin">Copiar</button><br>
+        Deja vacío «URI de redirección» y pulsa <b>Crear</b>.<br>
+        <a class="go" href="${G}auth/clients/create" target="_blank" rel="noopener">⑤ Abrir «Crear cliente» ↗</a>
+        <div class="ask">📱 ¿La página de Google sale cortada o sin el botón «Crear cliente»? Es que la consola de Google está pensada para el ordenador. Prueba una de estas dos cosas: <b>(a)</b> en el menú ⋮ de Brave marca <b>«Sitio de escritorio»</b> y recarga; <b>(b)</b> en la lista «Clientes», toca los <b>tres puntos ⋮</b> que hay junto al título y elige <b>«Crear cliente»</b>. Lo más fácil es hacer solo este paso desde el ordenador.</div></li>
+      <li><b>Pega aquí la llave que te da Google.</b> Al pulsar <b>Crear</b> en el paso 5, Google te enseña una ventana con un texto largo llamado <b>«ID de cliente»</b> (acaba en <code>.apps.googleusercontent.com</code>). <b>Mantén pulsado ese texto → Copiar</b>, vuelve a esta página y <b>pégalo en el cuadro</b> de aquí abajo. Luego pulsa «Guardar y continuar».
+        <div class="ask">📱 En el móvil el ID sale <b>a la derecha</b>: la ventana o la fila de Google es más ancha que la pantalla. <b>Desliza el dedo hacia la derecha</b> para ver el ID entero, hasta el final (<code>.apps.googleusercontent.com</code>).</div>
+        <button class="btn-sm" id="reopen5" style="margin-top:8px">↩ Volver a ver el paso 5</button>
+        <div class="ask">¿Cerraste esa ventana? En Google ve a «Credenciales» (menú ☰ → APIs y servicios), pulsa el cliente que creaste y copia el ID de cliente que sale arriba.</div>
+        <input class="cid" id="cid" type="text" placeholder="1234567890-abcdefg.apps.googleusercontent.com" autocomplete="off" spellcheck="false">
+        <button class="btn" id="saveCid" style="margin-top:10px">Guardar y continuar</button>
+        <p class="hint" id="err" style="color:var(--bad)"></p>
+        <div class="ask">No es una contraseña: es seguro guardarlo. Solo se guarda en este navegador.</div></li>
+    </ol>
+    <p class="hint">La primera vez que conectes, Google dirá «Google no ha verificado esta aplicación». Es normal (es tu propia app en modo de prueba): pulsa <b>Configuración avanzada → Ir a (el nombre que le pusiste) (no seguro)</b> y acepta los permisos.</p>
+    <button class="btn2" onclick="location.href='./#home'">← Volver al inicio</button>
+    <button class="btn2" onclick="location.href='?demo'">Ver cómo funciona con correos de ejemplo</button>
+  </div>`;
+  // cada paso: título (con ✓ y tachado si está hecho), cuerpo solo en el paso actual y botón «Ya lo he hecho»
+  const done = setupState(), lis = [...a.querySelectorAll('.steps li')], last = lis.length - 1;
+  let cur = lis.findIndex((l, i) => i < last && !done[i]); if (cur < 0) cur = last;
+  lis.forEach((li, i) => {
+    const m = li.innerHTML.match(/^\s*<b>(.*?)<\/b>([\s\S]*)$/);
+    const title = (m ? m[1] : 'Paso ' + (i + 1)).replace(/\.$/, ''), rest = m ? m[2] : li.innerHTML;
+    const st = i < last && done[i] ? 'done' : i === cur ? 'cur' : 'todo';
+    li.className = st + (setupOpen === i ? ' open' : '');
+    const SUM = ['Crear un proyecto nuevo en Google', 'Activar la API de Gmail', 'Preparar la pantalla de permisos', 'Dar de alta tu Gmail como usuario de prueba', 'Crear la llave de conexión', 'Copiar esa llave y pegarla en esta página'];
+    li.innerHTML = `<div class="sh" data-i="${i}"><span class="stt">${title}</span>${st === 'done' ? '<span class="okk">✓ hecho</span>' : ''}</div>${st === 'todo' && SUM[i] ? `<div class="sum">${SUM[i]} · toca para ver cómo</div>` : ''}<div class="sb">${rest}`
+      + (i < last ? (st === 'done' ? `<br><button class="btn-sm" data-undo="${i}">Volver a abrir este paso</button>` : `<button class="didit" data-done="${i}">Ya lo he hecho → marcar y pasar al siguiente</button>`) : '') + '</div>';
+  });
+  const nDone = done.slice(0, last).filter(Boolean).length;
+  a.querySelector('.steps').insertAdjacentHTML('beforebegin', `<div class="setup-note">ℹ️ Esta página <b>no puede ver</b> lo que haces en Google. Cuando termines cada paso, <b>pulsa tú el botón «Ya lo he hecho»</b>: así se tacha y se abre el siguiente.</div>
+    <div class="setup-prog">${nDone >= last ? '¡Casi! Solo falta pegar el ID de cliente' : 'Llevas ' + nDone + ' de ' + last + ' pasos marcados. Ahora: ' + lis[cur].querySelector('.stt').textContent}</div>`
+    + (nDone < last ? '<button class="btn2" id="skipAll" style="margin-top:8px">Ya hice todo en Google → ir directo al último paso</button>' : ''));
+  // el paso 5 se tacha al marcarlo; este botón lo vuelve a abrir (sin desmarcarlo) para poder mirarlo otra vez
+  if ($('reopen5')) $('reopen5').onclick = () => { setupOpen = lis.length - 2; renderSetup(a); const s5 = a.querySelectorAll('.steps li')[lis.length - 2]; if (s5) s5.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  if ($('skipAll')) $('skipAll').onclick = () => { setupSave(Array(last).fill(true)); setupOpen = -1; renderSetup(a); const c = a.querySelector('.steps li.cur'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  if (prevCid && $('cid')) $('cid').value = prevCid;
+  a.querySelectorAll('[data-done]').forEach(b => b.onclick = () => {
+    const d = setupState(); d[b.dataset.done] = true; setupSave(d); setupOpen = -1; renderSetup(a);
+    const c = a.querySelector('.steps li.cur'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  a.querySelectorAll('[data-undo]').forEach(b => b.onclick = () => { const d = setupState(); d[b.dataset.undo] = false; setupSave(d); setupOpen = -1; renderSetup(a); });
+  a.querySelectorAll('.sh').forEach(h => h.onclick = () => { const i = Number(h.dataset.i); if (i === cur) return; setupOpen = setupOpen === i ? -1 : i; renderSetup(a); });
+  $('copyOrigin').onclick = async () => {
+    try { await navigator.clipboard.writeText('https://gcalabro12.github.io'); $('copyOrigin').textContent = '✓ Copiado'; }
+    catch (e) { const r = document.createRange(); r.selectNode($('origin')); getSelection().removeAllRanges(); getSelection().addRange(r); $('copyOrigin').textContent = 'Selecciónala y copia'; }
+  };
+  $('saveCid').onclick = () => {
+    const v = $('cid').value.trim().replace(/\s+/g, '');
+    if (!/^[0-9]+-[a-z0-9_]+\.apps\.googleusercontent\.com$/i.test(v)) {
+      $('err').textContent = 'Ese ID no parece correcto: debe acabar en .apps.googleusercontent.com. Cópialo entero desde la ventana de Google (o desde «Credenciales»).';
+      return;
+    }
+    try { localStorage.setItem('pcbm_correo_cid', v); } catch (e) {}
+    GOOGLE_CLIENT_ID = v; render();
+  };
+}
+function renderIntro(a) {
+  if (!GOOGLE_CLIENT_ID && !DEMO) return renderSetup(a);
+  a.innerHTML = `<div class="card">
+    <p class="big">¿Quieres que conecte tu correo para ayudarte a etiquetar tus emails, para que los puedas leer con facilidad y agrupados por temas?</p>
+    <p>Repasaré <b>solo los correos de tu bandeja de entrada</b> de los últimos 3 meses y te sugeriré <b>5 etiquetas</b>. Tú eliges cuáles quieres. Además verás los <b>correos urgentes</b> y los que traen <b>facturas y documentos</b>, también de la bandeja de entrada.</p>
+    <div class="guia"><b>Paso a paso</b> (Google te lo irá pidiendo):
+      <ol>
+        <li>Pulsa el botón de abajo y <b>elige tu cuenta de Gmail</b>.</li>
+        <li>Saldrá un aviso rojo: «Google no ha verificado esta aplicación». Es normal. Pulsa <b>Configuración avanzada</b> (abajo, a la izquierda) y luego <b>Ir a gcalabro12.github.io (no seguro)</b>.</li>
+        <li>Marca la casilla <b>Seleccionar todo</b>, para que queden marcados los dos permisos. Si dejas alguno sin marcar, no funcionará.</li>
+        <li>Pulsa <b>Continuar</b>. ¡Listo!</li>
+      </ol>
+      <span class="hint">Este gestor solo funciona con Gmail.</span>
+    </div>
+    <button class="btn" id="go">Sí, conectar mi Gmail</button>
+    <button class="btn2" onclick="location.href='./#home'">Ahora no</button>
+    <p class="hint">🔒 Todo se hace en tu navegador: tus correos no se guardan en ningún servidor. Puedes desconectarlo cuando quieras.</p>
+    ${DEMO || !ownCid() ? '' : '<p class="hint"><a href="#" id="resetCid" style="color:var(--mut)">Dejar de usar mi ID de cliente propio</a></p>'}
+    ${DEMO ? '<div class="demo">Modo de prueba: son correos inventados, no se conecta a ningún Gmail.</div>' : ''}
+    <p class="hint" id="err" style="color:var(--bad)"></p></div>`;
+  $('go').onclick = startScan;
+  if ($('resetCid')) $('resetCid').onclick = e => { e.preventDefault(); try { localStorage.removeItem('pcbm_correo_cid'); } catch (er) {} GOOGLE_CLIENT_ID = COMMON_CID; render(); };
+}
+function renderScan(a) {
+  a.innerHTML = `<div class="card"><h2>Repasando tus correos…</h2><p id="scanTxt">Buscando temas</p><div class="prog"><div id="scanBar"></div></div><p class="hint" id="err" style="color:var(--bad)"></p></div>`;
+}
+async function startScan() {
+  if (busy) return; busy = true;
+  try {
+    await getToken();
+    st.connected = true; st.scanning = true; save(); render();
+    const res = [];
+    for (let i = 0; i < TOPICS.length; i++) {
+      const t = TOPICS[i];
+      $('scanTxt').textContent = 'Buscando: ' + t.name;
+      $('scanBar').style.width = Math.round((i + 1) / TOPICS.length * 100) + '%';
+      const c = await count('in:inbox -in:sent newer_than:90d ' + t.q);
+      if (c.n >= 3) res.push({ name: t.name, q: t.q, n: c.n, ids: c.ids.slice(0, 2) });
+    }
+    res.sort((x, y) => y.n - x.n);
+    const top = res.slice(0, 5);
+    for (const s of top) { s.ex = []; for (const id of s.ids) { try { s.ex.push((await headers(id)).subject); } catch (e) {} } }
+    st.suggest = top; st.scanV = SCAN_V; st.scanning = false; save(); render();
+  } catch (e) {
+    st.scanning = false; if (!st.labels) st.connected = !!token && st.connected; save(); render();
+    const er = $('err'); if (er) er.textContent = e.message;
+  } finally { busy = false; }
+}
+function renderSuggest(a) {
+  const s = st.suggest || [];
+  a.innerHTML = `<div class="card"><h2>Te sugiero estas etiquetas</h2>
+    <p>Marca las que quieras (puedes cambiarles el nombre). Pondré la etiqueta a los correos que ya tienes <b>en la bandeja de entrada</b>, y Gmail se la pondrá solo a los nuevos que lleguen.</p>
+    ${s.length ? s.map((x, i) => `<div class="sug"><input type="checkbox" data-i="${i}" checked aria-label="Usar esta etiqueta">
+      <div><input type="text" data-n="${i}" value="${esc(x.name)}" maxlength="40"><div class="ex">${x.ex && x.ex.length ? 'Ej.: ' + x.ex.map(esc).join(' · ') : ''}</div></div>
+      <span class="n">${x.n} correos</span></div>`).join('') : '<p class="empty">No he encontrado temas con suficientes correos.</p>'}
+    <button class="btn" id="ok">Crear las etiquetas marcadas</button>
+    <button class="btn2" id="skip">No quiero etiquetas, solo lo urgente y las facturas</button>
+    <p class="hint" id="err" style="color:var(--bad)"></p></div>`;
+  $('ok').onclick = applyLabels;
+  $('skip').onclick = () => { st.labels = []; save(); render(); setTimeout(() => refresh(true), 50); };
+}
+async function applyLabels() {
+  if (busy) return; busy = true;
+  const chosen = [];
+  document.querySelectorAll('.sug').forEach(row => {
+    const i = Number(row.querySelector('[data-i]').dataset.i);
+    if (row.querySelector('[data-i]').checked) chosen.push({ ...st.suggest[i], name: row.querySelector('[data-n]').value.trim() || st.suggest[i].name });
+  });
+  const btn = $('ok'); btn.disabled = true;
+  try {
+    const existing = ((await gm('labels')).labels || []);
+    const done = [];
+    for (const c of chosen) {
+      btn.textContent = 'Creando «' + c.name + '»…';
+      let lab = existing.find(l => l.name.toLowerCase() === c.name.toLowerCase());
+      if (!lab) lab = await gm('labels', { method: 'POST', body: JSON.stringify({ name: c.name, labelListVisibility: 'labelShow', messageListVisibility: 'show' }) });
+      // correos que ya tienes (los más recientes, hasta 500)
+      const ids = (await count('in:inbox -in:sent ' + c.q)).ids;
+      for (let i = 0; i < ids.length; i += 500) await gm('messages/batchModify', { method: 'POST', body: JSON.stringify({ ids: ids.slice(i, i + 500), addLabelIds: [lab.id] }) });
+      // los nuevos: filtro de Gmail (funciona aunque la app esté cerrada)
+      let filtro = true;
+      try { await gm('settings/filters', { method: 'POST', body: JSON.stringify({ criteria: { query: filterQuery(c.q) }, action: { addLabelIds: [lab.id] } }) }); } catch (e) { filtro = false; }
+      done.push({ name: c.name, id: lab.id, q: c.q, n: ids.length, filtro });
+    }
+    st.labels = done; st.lastRun = today(); save(); render(); setTimeout(() => refresh(true), 50);
+  } catch (e) { $('err').textContent = e.message; btn.disabled = false; btn.textContent = 'Crear las etiquetas marcadas'; }
+  finally { busy = false; }
+}
+// Los filtros de Gmail ignoran lo que envías tú
+const filterQuery = q => '(' + q + ') -from:me';
+function renderPanel(a) {
+  const labs = st.labels || [], u = st.urgent || [], f = st.fact || [], d = st.docs || [];
+  const mails = l => l.map(m => `<a class="mail" href="${openLink(m)}" target="_blank" rel="noopener"><b>${esc(m.subject)}</b><span>${esc(m.from)} · ${fdate(m.date)}</span></a>`).join('');
+  const fn = (k, ico, title, desc, badge, body) => `<details class="fn" name="fn" data-k="${k}" ${tab === k ? 'open' : ''}><summary><span class="fi">${ico}</span><span class="ft"><b>${title}</b><small>${desc}</small></span>${badge ? `<span class="fbadge">${badge}</span>` : ''}</summary><div class="fb">${body}</div></details>`;
+  const temas = labs.length
+    ? `<h2>Tus temas</h2>${labs.map(l => `<span class="tag">🏷️ ${esc(l.name)} · ${l.n}</span>`).join('')}
+      <p class="hint">${labs.every(l => l.filtro) ? 'Gmail pone estas etiquetas solo a los correos nuevos, cada día, aunque no abras la app.' : 'Las etiquetas sin filtro se repasan cuando abres esta página.'}</p>
+      <button class="btn2" id="resug">🏷️ Elegir otros temas</button>`
+    : `<p class="empty">Todavía no has elegido temas.</p><button class="btn" id="resug">🏷️ Elegir mis temas</button>`;
+  const urgentes = `<p class="hint" style="margin-top:0">Los correos sin leer de los últimos 3 días que hablan de plazos, vencimientos o urgencias. Si llega uno nuevo con esta página abierta, te aviso.</p>` + (u.length ? mails(u) : '<p class="empty">Nada urgente. 🌿</p>');
+  const docs = `<h2>🧾 Facturas (60 días)</h2>` + (f.length ? mails(f) : '<p class="empty">No hay facturas recientes.</p>')
+    + `<h2 style="margin-top:16px">📄 Otros documentos (30 días)</h2>` + (d.length ? mails(d) : '<p class="empty">No hay documentos recientes.</p>');
+  a.innerHTML = `${st.lastRun !== today() ? `<div class="card"><p class="big">☀️ Buenos días: ¿repaso tu correo de hoy?</p><button class="btn" id="morning">Repasar mi correo</button></div>` : ''}
+    ${fn('etiquetas', '🏷️', 'Ordenar por temas', 'Pon etiquetas a tus correos para poder leerlos agrupados por temas: compras, boletines, facturas…', labs.length, temas)}
+    ${fn('urgentes', '🚨', 'Lo urgente', 'Los correos que no puedes dejar pasar: plazos, vencimientos y avisos.', u.length, urgentes)}
+    ${fn('adjuntos', '🧾', 'Facturas y documentos', 'Tus facturas y los PDF, Word o Excel que te han enviado, juntos y sin buscarlos.', f.length + d.length, docs)}
+    <div class="card"><div class="row"><button class="btn-sm" id="again">🔄 Repasar ahora</button><button class="btn-sm" id="off">Desconectar</button></div>
+    <p class="hint">Última revisión: ${st.lastCheck ? new Date(st.lastCheck).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '—'}. Mientras esta página esté abierta repaso los urgentes cada 15 minutos.</p>
+    <p class="hint" id="err" style="color:var(--bad)"></p></div>`;
+  document.querySelectorAll('.fn').forEach(x => x.addEventListener('toggle', () => { if (x.open) tab = x.dataset.k; else if (tab === x.dataset.k) tab = ''; }));
+  if ($('morning')) $('morning').onclick = () => refresh(true);
+  if ($('resug')) $('resug').onclick = () => { st.suggest = null; st.labels = null; save(); startScan(); };
+  $('again').onclick = () => refresh(true);
+  $('off').onclick = disconnect;
+}
+// Repaso: urgentes, facturas y documentos (y aviso si hay urgentes nuevos)
+async function refresh(user) {
+  if (busy || !st.connected) return;
+  busy = true;
+  try {
+    if (!user && !token && !DEMO) return; // sin permiso vigente no abre ventanas solo
+    const u = await listMails(URGENT_Q, 10);
+    const seen = new Set(st.seenUrgent || []), nuevos = u.filter(m => !seen.has(m.id));
+    st.urgent = u; st.seenUrgent = [...seen, ...nuevos.map(m => m.id)].slice(-200);
+    st.fact = await listMails(FACT_Q, 12);
+    st.docs = await listMails(DOCS_Q, 12);
+    st.lastCheck = Date.now(); st.lastRun = today(); save();
+    if (nuevos.length) notify(nuevos);
+  } catch (e) { const er = $('err'); if (er) er.textContent = e.message; }
+  finally { busy = false; render(); }
+}
+function notify(list) {
+  const title = list.length === 1 ? '🚨 Correo urgente' : `🚨 ${list.length} correos urgentes`;
+  const body = list.slice(0, 3).map(m => m.from + ': ' + m.subject).join('\n');
+  try {
+    if ('Notification' in window && Notification.permission === 'granted') new Notification(title, { body, icon: 'icon-192.png' });
+    else if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+  } catch (e) {}
+}
+function disconnect() {
+  appConfirm('Desconectar Gmail', '¿Desconectar tu Gmail de Amable PC? Las etiquetas y filtros que ya están en Gmail se quedan.', 'Desconectar', () => {
+    try { if (token && window.google && !DEMO) google.accounts.oauth2.revoke(token, () => {}); } catch (e) {}
+    token = null; st = {}; save(); render();
+  });
+}
+// Ventana de confirmación con el mismo aspecto que el resto de la app (en vez de la del navegador)
+function appConfirm(title, text, okLabel, onYes) {
+  const box = document.createElement('div');
+  box.style.cssText = 'position:fixed;inset:0;z-index:99;background:rgba(2,6,23,0.8);display:flex;align-items:center;justify-content:center;padding:20px;';
+  box.innerHTML = '<div style="background:#1E293B;border:3px solid #818CF8;border-radius:1.4rem;padding:1.6rem 1.3rem;max-width:380px;width:100%;text-align:center;color:#F8FAFC">'
+    + '<div style="font-size:1.25rem;font-weight:800;color:#A5B4FC;margin-bottom:8px"></div>'
+    + '<div style="color:#CBD5E1;line-height:1.45;margin-bottom:16px"></div>'
+    + '<div style="display:flex;gap:10px"><button data-no style="flex:1;padding:12px;border-radius:14px;border:1px solid #475569;background:transparent;color:#CBD5E1;font-weight:700;font-size:1rem">Cancelar</button>'
+    + '<button data-yes style="flex:1;padding:12px;border-radius:14px;border:0;background:#4F46E5;color:#fff;font-weight:700;font-size:1rem"></button></div></div>';
+  box.children[0].children[0].textContent = title;
+  box.children[0].children[1].textContent = text;
+  box.querySelector('[data-yes]').textContent = okLabel || 'Aceptar';
+  box.querySelector('[data-no]').onclick = () => box.remove();
+  box.querySelector('[data-yes]').onclick = () => { box.remove(); onYes(); };
+  document.body.appendChild(box);
+}
+
+// ---------- Modo de prueba (sin Gmail): correos inventados ----------
+function demoApi(path, opt) {
+  const delay = v => new Promise(r => setTimeout(() => r(v), 120));
+  const fake = { 'Facturas y pagos': 41, 'Boletines y novedades': 128, 'Compras y envíos': 23, 'Citas y reuniones': 17, 'Redes sociales': 36, 'Seguridad y accesos': 9, 'Formación y cursos': 12, 'Viajes y reservas': 2 };
+  const subj = { 'Facturas y pagos': ['Tu factura de octubre', 'Recibo de la cuota'], 'Boletines y novedades': ['Novedades de la semana', '5 ideas para tu negocio'], 'Compras y envíos': ['Tu pedido ha sido enviado', 'En reparto hoy'], 'Citas y reuniones': ['Invitación: reunión del lunes', 'Recordatorio de tu cita'], 'Redes sociales': ['Tienes 3 notificaciones nuevas', 'Alguien comentó tu publicación'] };
+  if (path === 'settings/filters' && !(opt && opt.method)) return delay({ filter: (st.labels || []).map((l, i) => ({ id: 'F' + i, criteria: { query: l.q }, action: { addLabelIds: [l.id] } })) });
+  if (path.startsWith('messages?')) {
+    const q = decodeURIComponent(path.split('q=')[1] || '');
+    if (q.includes('(in:sent OR in:drafts)')) return delay({ messages: [{ id: 's1' }, { id: 's2' }, { id: 's3' }] });
+    if (q.includes('is:unread (urgente')) return delay({ messages: [{ id: 'u1' }, { id: 'u2' }] });
+    if (q.includes('has:attachment') && q.includes('-factura')) return delay({ messages: [{ id: 'd1' }] });
+    if (q.includes('has:attachment')) return delay({ messages: [{ id: 'f1' }, { id: 'f2' }] });
+    const t = TOPICS.find(t => q.includes(t.q));
+    const n = t ? (fake[t.name] || 0) : 0;
+    return delay({ messages: Array.from({ length: Math.min(n, 500) }, (_, i) => ({ id: (t ? t.name : 'x') + '#' + i })), resultSizeEstimate: n });
+  }
+  if (path.startsWith('messages/batchModify') || path.startsWith('settings/filters')) return delay({});
+  if (path === 'labels' && (!opt || !opt.method)) return delay({ labels: [] });
+  if (path === 'labels') return delay({ id: 'L' + Math.random().toString(36).slice(2, 6), name: JSON.parse(opt.body).name });
+  if (path.startsWith('messages/')) {
+    const id = decodeURIComponent(path.slice(9).split('?')[0]);
+    const map = { u1: ['Hacienda', 'URGENTE: último aviso para presentar el modelo'], u2: ['Cliente Ana', 'Necesito la propuesta lo antes posible'], f1: ['Iberdrola', 'Tu factura de luz'], f2: ['Movistar', 'Factura de octubre'], d1: ['Gestoría', 'Contrato para revisar (PDF)'] };
+    if (map[id]) return delay({ id, threadId: id, internalDate: String(Date.now() - 3600e3), payload: { headers: [{ name: 'From', value: map[id][0] }, { name: 'Subject', value: map[id][1] }] } });
+    const name = id.split('#')[0], k = Number(id.split('#')[1]) || 0;
+    return delay({ id, threadId: id, internalDate: String(Date.now()), payload: { headers: [{ name: 'From', value: 'Demo' }, { name: 'Subject', value: (subj[name] || ['Correo de ejemplo'])[k % 2] || 'Correo' }] } });
+  }
+  return delay({});
+}
+
+// Sugerencias hechas con la búsqueda anterior (todo el correo): se descartan y se vuelve a preguntar
+if (st.suggest && !st.labels && st.scanV !== SCAN_V) { st.suggest = null; st.connected = false; save(); }
+render();
+if (st.connected && st.labels) { if (DEMO || token) refresh(); }
+setInterval(() => { if (st.connected && st.labels && (token || DEMO)) refresh(); }, 15 * 60e3);
+</script>
+</body>
+</html>
