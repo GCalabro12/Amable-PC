@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.59</title>
+<title>Amable PC v2.60</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1366,7 +1366,7 @@
   <details class="mn-det hidden" id="mnResumen" name="menu">
     <summary>📊 Mi resumen diario</summary>
     <div class="mn-body">
-      <div class="help-text">Una vez al día (sobre las 20:00) Amable PC envía a tu Grow Panel solo tres números: tus pasos, las pausas de vista hechas y los minutos de concentración. Nunca se envían textos ni tareas. Puedes apagarlo cuando quieras.</div>
+      <div class="help-text">Cuando tus números cambian (y como mucho cada 5 minutos), Amable PC deja en tu registro diario solo tres números: tus pasos, las pausas de vista hechas y los minutos de concentración. Así Grow Panel los ve al momento, aunque esté en otro aparato. Nunca se envían textos ni tareas. Puedes apagarlo cuando quieras.</div>
       <label class="check" style="display:flex;align-items:center;justify-content:flex-start;gap:10px;text-align:left"><input type="checkbox" id="regOn"> Compartir mi resumen diario</label>
       <button class="btn-outline" id="regNow" style="margin-top:8px">Enviar ahora</button>
       <div class="hint" id="regMsg"></div>
@@ -1576,7 +1576,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.59';
+const VERSION = 'v2.60';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -1649,25 +1649,29 @@ function gpSoon() {
   clearTimeout(gpT);
   gpT = setTimeout(() => { try { gpSend(gpLocal()); } catch (e) {} }, 1200);
 }
-// ---------- Resumen diario: una vez al día manda solo números al registro diario de las apps Amable ----------
-// Viene activado de serie para quien ya usa Grow Panel (que es quien da la clave personal del registro); se apaga en el menú.
-// Sin Grow Panel no se ve ni envía nada. La clave se lee en el momento de enviar y solo viaja en la cabecera Authorization, nunca en una URL.
-// Desde la v2.57 el envío lo hace Grow Panel (pide los números a la app, que se los pasa); el envío propio de la app queda apagado.
-// Para volver a activarlo: REGISTRO_URL = 'https://registro-diario.proud-hill-016b.workers.dev'
-let REGISTRO_URL = ''; // vacía = la función no se ve ni envía nada
-const REG_KEY = 'pcbm_registro', REG_CLAVE = /^[A-Za-z0-9_-]{32,128}$/;
+// ---------- Buzón común: la app deja sus números en el registro diario cuando cambian ----------
+// Grow Panel está a menudo en otro aparato (el PC) y no puede preguntar a la app del móvil: por eso la app deja ahí sus números
+// y Grow Panel los recoge. Solo números (pasos, pausas de vista, minutos de concentración), nunca textos. Se apaga en el menú.
+// Quién eres: primero la sesión de tu cuenta de Amable PC (la misma persona que en Grow Panel si entraste con Google), «Bearer pc.<sesión>»;
+// si no, la clave de Grow Panel de este navegador. Nunca viaja en una URL.
+let REGISTRO_URL = 'https://registro-diario.proud-hill-016b.workers.dev'; // vacía = la función no se ve ni envía nada
+const REG_KEY = 'pcbm_registro', REG_CLAVE = /^[A-Za-z0-9_-]{32,128}$/, REG_MIN_MS = 5 * 60000;
 function regGet() {
-  try { const r = JSON.parse(localStorage.getItem(REG_KEY)); if (r && typeof r === 'object') return { on: !r.off, last: String(r.last || ''), at: r.at || 0, err: String(r.err || ''), conc: r.conc || null, prev: r.prev || null }; } catch (e) {}
-  return { on: true, last: '', at: 0, err: '', conc: null, prev: null };
+  try { const r = JSON.parse(localStorage.getItem(REG_KEY)); if (r && typeof r === 'object') return { on: !r.off, at: r.at || 0, err: String(r.err || ''), conc: r.conc || null, prev: r.prev || null, sent: r.sent || null, loc: r.loc || null }; } catch (e) {}
+  return { on: true, at: 0, err: '', conc: null, prev: null, sent: null, loc: null };
 }
 function regSet(r) { const o = { ...r, off: !r.on }; delete o.on; try { localStorage.setItem(REG_KEY, JSON.stringify(o)); } catch (e) {} }
-// Primero la memoria compartida con Grow Panel («growpanel.clave»), luego GrowPanel.clave(); si no hay ninguna, no se envía y no se dice nada
 function regClave() {
   try { const k = localStorage.getItem('growpanel.clave'); if (k && REG_CLAVE.test(k)) return k; } catch (e) {}
   try { if (window.GrowPanel && typeof window.GrowPanel.clave === 'function') { const k = window.GrowPanel.clave(); if (typeof k === 'string' && REG_CLAVE.test(k)) return k; } } catch (e) {}
   return '';
 }
-const regAyer = () => dayKey(new Date(Date.now() - 86400000));
+function regCreds() { // por orden de preferencia
+  const out = [];
+  try { const t = localStorage.getItem(TOK_KEY); if (t && /^[a-f0-9]{64}$/.test(t)) out.push('pc.' + t); } catch (e) {}
+  const k = regClave(); if (k) out.push(k);
+  return out;
+}
 // Minutos de concentración del día: se suma cada tramo al pausar o al acabar (se anota siempre, en local)
 function regAddFocus(ms) {
   if (!(ms > 0) || SCREEN || REMOTE) return;
@@ -1682,69 +1686,101 @@ function regDatos(k) { // solo números
   const R = regGet(), V = db.vista, d = db.days[k], c = [R.conc, R.prev].find(x => x && x.k === k);
   return { pasos: Math.round((d && d.steps) || 0), pausas_vista: V.doneDay && V.doneDay.k === k ? V.doneDay.n : 0, minutos_concentracion: c ? Math.round(c.ms / 60000) : 0 };
 }
+const regVacio = d => !d.pasos && !d.pausas_vista && !d.minutos_concentracion;
 let regBusy = false;
-async function regSend(k, mark = true) {
-  const R = regGet(), clave = regClave();
-  if (SCREEN || REMOTE || !REGISTRO_URL || !R.on || !clave || regBusy) return false;
+// Llama al registro probando cada forma de identificarse; con 401 prueba la siguiente
+async function regLlamar(metodo, ruta, cuerpo, keepalive) {
+  const cr = regCreds(); if (!cr.length) return null;
+  let res = null;
+  for (const c of cr) {
+    const h = { 'Authorization': 'Bearer ' + c }; if (cuerpo) h['Content-Type'] = 'application/json';
+    res = await fetch(REGISTRO_URL.replace(/\/+$/, '') + ruta, { method: metodo, headers: h, body: cuerpo ? JSON.stringify(cuerpo) : undefined, keepalive: !!keepalive });
+    if (res.status !== 401) break;
+  }
+  return res;
+}
+// Envía los números de hoy. Nunca una copia vacía; y por si hay otra copia de la app (otro aparato) con más datos, queda el mayor de cada uno
+async function regSend(k, salir) {
+  const R = regGet();
+  if (SCREEN || REMOTE || !REGISTRO_URL || !R.on || regBusy || !regCreds().length) return false;
+  let d = regDatos(k);
+  if (regVacio(d)) return false;
+  const local = { ...d }; // lo de esta copia, para saber después si ha cambiado algo
   regBusy = true;
   try {
-    const res = await fetch(REGISTRO_URL.replace(/\/+$/, '') + '/registro', { method: 'POST', headers: { 'Authorization': 'Bearer ' + clave, 'Content-Type': 'application/json' }, body: JSON.stringify({ fecha: k, app: 'amable-pc', datos: regDatos(k) }) });
-    if (!res.ok) throw new Error(res.status === 429 ? 'Has llegado al límite de datos del registro' : 'No se pudo enviar (error ' + res.status + ')');
-    const R2 = regGet(); if (mark && k > R2.last) R2.last = k; R2.at = Date.now(); R2.err = ''; regSet(R2);
+    if (R.sent && R.sent.k === k) for (const n of Object.keys(d)) d[n] = Math.max(d[n], R.sent[n] || 0);
+    if (!salir) { // sin prisa: se mira lo que ya hay para no pisar números más altos de otro aparato
+      try {
+        const g = await regLlamar('GET', '/registro?fecha=' + k + '&app=amable-pc');
+        if (g && g.ok) { const j = await g.json(); (j.filas || []).forEach(f => { if (f && f.dato in d && Number.isFinite(f.valor)) d[f.dato] = Math.max(d[f.dato], f.valor); }); }
+      } catch (e) {}
+    }
+    const res = await regLlamar('POST', '/registro', { fecha: k, app: 'amable-pc', datos: d }, salir);
+    if (!res) return false;
+    if (!res.ok) throw new Error(res.status === 429 ? 'Has llegado al límite de datos del registro' : res.status === 401 ? 'Todavía no te reconoce el registro (entra con Google en Amable PC)' : 'No se pudo enviar (error ' + res.status + ')');
+    const R2 = regGet(); R2.sent = { k, ...d }; R2.loc = { k, ...local }; R2.at = Date.now(); R2.err = ''; regSet(R2);
     return true;
   } catch (e) {
-    const R2 = regGet(); R2.err = e && e.message && !/fetch|network/i.test(e.message) ? e.message : 'Sin conexión: lo reintento más tarde'; regSet(R2);
+    const R2 = regGet(); R2.err = e && e.message && !/fetch|network|load failed/i.test(e.message) ? e.message : 'Sin conexión: lo reintento más tarde'; R2.at = Math.max(R2.at, Date.now() - REG_MIN_MS + 60000); regSet(R2);
     return false;
   } finally { regBusy = false; }
 }
-// Entre las 20:00 y las 20:25 y, al abrir la app, si ese día aún no se envió (y si ayer se quedó sin enviar, se envía antes)
-async function regTick(opening) {
+// ¿hay algo nuevo desde el último envío? (con «cambio» solo si es significativo: +100 pasos, +5 min o una pausa nueva)
+function regCambio(k, d, significativo) {
+  const R = regGet(), s = R.loc || R.sent; // se compara con lo que esta copia envió la última vez
+  if (!s || s.k !== k) return true;
+  if (significativo) return d.pasos - s.pasos >= 100 || d.pausas_vista > s.pausas_vista || d.minutos_concentracion - s.minutos_concentracion >= 5;
+  return d.pasos !== s.pasos || d.pausas_vista !== s.pausas_vista || d.minutos_concentracion !== s.minutos_concentracion;
+}
+// motivo: 'rutina' (cada minuto: solo si hay cambio significativo y han pasado 5 min), 'forzar' (al abrir, al volver, cada 15 min: si hay cualquier cambio), 'salir'
+async function regTick(motivo) {
   if (SCREEN || REMOTE || !REGISTRO_URL) return;
-  const R = regGet(); if (!R.on || !regClave()) return;
-  const k = dayKey(), m = nowMin(), ayer = regAyer();
-  if (!R.last) { R.last = ayer; regSet(R); } // la primera vez no se mandan días anteriores
-  if (opening && R.last < ayer && db.days[ayer] && db.days[ayer].steps > 0) await regSend(ayer);
-  if (regGet().last < k && m >= 1200 && (m <= 1225 || opening)) await regSend(k);
+  const R = regGet(); if (!R.on || !regCreds().length) return;
+  const k = dayKey(), d = regDatos(k);
+  if (regVacio(d)) return;
+  if (motivo === 'rutina' && (Date.now() - R.at < REG_MIN_MS || !regCambio(k, d, true))) return;
+  if (motivo !== 'rutina' && !regCambio(k, d, false)) return;
+  await regSend(k, motivo === 'salir');
+  regRender();
 }
 function regRender() {
   if (!$('mnResumen')) return;
   const R = regGet();
-  $('mnResumen').classList.toggle('hidden', !REGISTRO_URL || !regClave()); // sin Grow Panel no se ve nada
+  $('mnResumen').classList.toggle('hidden', !REGISTRO_URL || !regCreds().length); // sin cuenta ni Grow Panel no se ve nada
   $('regOn').checked = R.on;
-  const ult = R.at ? 'Último envío: ' + new Date(R.at).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : 'Se enviará hoy a las 20:00.';
+  const ult = R.at && R.sent ? 'Último envío: ' + new Date(R.at).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : 'Se enviará cuando cambien tus números.';
   $('regMsg').textContent = !R.on ? 'Apagado: no se envía nada.' : R.err ? '⚠️ ' + R.err : ult;
 }
 function regInit() {
   if (SCREEN || REMOTE) return;
   const msg = t => { $('regMsg').textContent = t; };
-  $('regOn').addEventListener('change', () => {
-    const R = regGet(); R.on = $('regOn').checked;
-    if (R.on && !R.last) R.last = regAyer(); // al activarlo no se mandan días anteriores
-    regSet(R); regRender();
-  });
+  $('regOn').addEventListener('change', () => { const R = regGet(); R.on = $('regOn').checked; regSet(R); regRender(); if (R.on) regTick('forzar'); });
   $('regNow').addEventListener('click', async () => {
     if (!regGet().on) return msg('Apagado: no se envía nada.');
+    if (regVacio(regDatos(dayKey()))) return msg('Todavía no hay números hoy que enviar.');
     msg('Enviando…');
     const ok = await regSend(dayKey(), false);
     regRender();
-    if (ok) msg('✔ Enviado. Esta noche se enviará de nuevo con los números del día completo.');
+    if (ok) msg('✔ Enviado. Se enviará de nuevo cuando cambien.');
   });
   $('regDel').addEventListener('click', () => {
-    if (!regClave()) return;
+    if (!regCreds().length) return;
     menuCerrar();
     appConfirm('Borrar mis datos del registro', 'Se borran del registro todos los números que han enviado tus apps Amable. Los datos de tu dispositivo no se tocan.', 'Borrar', async () => {
       try {
-        const res = await fetch(REGISTRO_URL.replace(/\/+$/, '') + '/registro', { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + regClave() } });
-        if (!res.ok) throw new Error('error ' + res.status);
-        const d = await res.json(); const R = regGet(); R.at = 0; R.err = ''; regSet(R);
+        const res = await regLlamar('DELETE', '/registro');
+        if (!res || !res.ok) throw new Error('error');
+        const d = await res.json(); const R = regGet(); R.at = 0; R.sent = null; R.loc = null; R.err = ''; regSet(R);
         infoModal('🗑 Registro borrado', `Se han borrado ${d.borradas || 0} datos de tu registro.`);
       } catch (e) { infoModal('No se ha podido borrar', 'Comprueba la conexión y vuelve a probar.'); }
     });
   });
-  setInterval(() => regTick(false), 60000);
-  setTimeout(() => regTick(true), 5000);
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') regTick(true); });
-  addEventListener('growpanel-listo', () => { regRender(); regTick(true); }); // Grow Panel puede cargar después de la app
+  setInterval(() => regTick('rutina'), 60000);
+  setInterval(() => regTick('forzar'), 15 * 60000); // también con la app Android en segundo plano, mientras su pantalla web siga viva
+  setTimeout(() => regTick('forzar'), 5000);
+  document.addEventListener('visibilitychange', () => { regTick(document.visibilityState === 'visible' ? 'forzar' : 'salir'); });
+  addEventListener('pagehide', () => { regTick('salir'); });
+  addEventListener('growpanel-listo', () => { regRender(); regTick('forzar'); }); // Grow Panel puede cargar después de la app
 }
 // --- vista móvil: lo que se edita en el PC se manda al móvil por secciones ---
 const REMOTE_KEYS = ['bloques', 'salud', 'vista', 'alerts', 'settings', 'pausi'];
