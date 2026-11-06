@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.62</title>
+<title>Amable PC v2.63</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1365,16 +1365,6 @@
         <div class="eq-hint" id="eqHint">Abre Amable Life → Ajustes → Bloques de Amable PC → pega el texto y toca «Traer el texto pegado».</div></div>
     </div>
   </details>
-  <details class="mn-det hidden" id="mnResumen" name="menu">
-    <summary>📊 Mi resumen diario</summary>
-    <div class="mn-body">
-      <div class="help-text">Cuando tus números cambian (y como mucho cada 5 minutos), Amable PC deja en tu registro diario solo tres números: tus pasos, las pausas de vista hechas y los minutos de concentración. Así Grow Panel los ve al momento, aunque esté en otro aparato. Nunca se envían textos ni tareas. Puedes apagarlo cuando quieras.</div>
-      <label class="check" style="display:flex;align-items:center;justify-content:flex-start;gap:10px;text-align:left"><input type="checkbox" id="regOn"> Compartir mi resumen diario</label>
-      <button class="btn-outline" id="regNow" style="margin-top:8px">Enviar ahora</button>
-      <div class="hint" id="regMsg"></div>
-      <button class="btn-outline" id="regDel" style="margin-top:8px">🗑 Borrar mis datos del registro</button>
-    </div>
-  </details>
   <details class="mn-det" id="mnShare" name="menu">
     <summary>📤 Recomendar Amable PC</summary>
     <div class="mn-body">
@@ -1578,7 +1568,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.62';
+const VERSION = 'v2.63';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -1743,46 +1733,16 @@ async function regTick(motivo) {
   if (motivo === 'rutina' && (Date.now() - R.at < REG_MIN_MS || !regCambio(k, d, true))) return;
   if (motivo !== 'rutina' && !regCambio(k, d, false)) return;
   await regSend(k, motivo === 'salir');
-  regRender();
 }
-function regRender() {
-  if (!$('mnResumen')) return;
-  const R = regGet();
-  $('mnResumen').classList.toggle('hidden', !REGISTRO_URL || !regCreds().length); // sin cuenta ni Grow Panel no se ve nada
-  $('regOn').checked = R.on;
-  const ult = R.at && R.sent ? 'Último envío: ' + new Date(R.at).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : 'Se enviará cuando cambien tus números.';
-  $('regMsg').textContent = !R.on ? 'Apagado: no se envía nada.' : R.err ? '⚠️ ' + R.err : ult;
-}
+// Sin nada visible en la app: el único interruptor (y el borrado) está en Grow Panel → Ajustes → «Tus datos». Si se apaga allí, el registro ignora los envíos.
 function regInit() {
   if (SCREEN || REMOTE) return;
-  const msg = t => { $('regMsg').textContent = t; };
-  $('regOn').addEventListener('change', () => { const R = regGet(); R.on = $('regOn').checked; regSet(R); regRender(); if (R.on) regTick('forzar'); });
-  $('regNow').addEventListener('click', async () => {
-    if (!regGet().on) return msg('Apagado: no se envía nada.');
-    if (regVacio(regDatos(dayKey()))) return msg('Todavía no hay números hoy que enviar.');
-    msg('Enviando…');
-    const ok = await regSend(dayKey(), false);
-    regRender();
-    if (ok) msg('✔ Enviado. Se enviará de nuevo cuando cambien.');
-  });
-  $('regDel').addEventListener('click', () => {
-    if (!regCreds().length) return;
-    menuCerrar();
-    appConfirm('Borrar mis datos del registro', 'Se borran del registro todos los números que han enviado tus apps Amable. Los datos de tu dispositivo no se tocan.', 'Borrar', async () => {
-      try {
-        const res = await regLlamar('DELETE', '/registro');
-        if (!res || !res.ok) throw new Error('error');
-        const d = await res.json(); const R = regGet(); R.at = 0; R.sent = null; R.loc = null; R.err = ''; regSet(R);
-        infoModal('🗑 Registro borrado', `Se han borrado ${d.borradas || 0} datos de tu registro.`);
-      } catch (e) { infoModal('No se ha podido borrar', 'Comprueba la conexión y vuelve a probar.'); }
-    });
-  });
   setInterval(() => regTick('rutina'), 60000);
   setInterval(() => regTick('forzar'), 15 * 60000); // también con la app Android en segundo plano, mientras su pantalla web siga viva
   setTimeout(() => regTick('forzar'), 5000);
   document.addEventListener('visibilitychange', () => { regTick(document.visibilityState === 'visible' ? 'forzar' : 'salir'); });
   addEventListener('pagehide', () => { regTick('salir'); });
-  addEventListener('growpanel-listo', () => { regRender(); regTick('forzar'); }); // Grow Panel puede cargar después de la app
+  addEventListener('growpanel-listo', () => { regTick('forzar'); }); // Grow Panel puede cargar después de la app
 }
 // --- vista móvil: lo que se edita en el PC se manda al móvil por secciones ---
 const REMOTE_KEYS = ['bloques', 'salud', 'vista', 'alerts', 'settings', 'pausi'];
@@ -3600,8 +3560,7 @@ async function perfilAbrir() {
   const a = acctGet();
   const td = $('pfData'); td.innerHTML = '';
   helpLinks();
-  $('pfPassBox').open = false; $('pfEmailBox').open = false; ['mnPerfil', 'mnLife', 'mnResumen', 'mnShare', 'mnAyuda', 'mnLegal'].forEach(id => { $(id).open = false; });
-  regRender();
+  $('pfPassBox').open = false; $('pfEmailBox').open = false; ['mnPerfil', 'mnLife', 'mnShare', 'mnAyuda', 'mnLegal'].forEach(id => { $(id).open = false; });
   $('profileModal').classList.remove('hidden'); $('menuBtn').setAttribute('aria-expanded', 'true');
   if (!a) return;
   const fila = (k, v) => { const d = document.createElement('div'); d.className = 'pf-row'; const s1 = document.createElement('span'); s1.textContent = k; const b = document.createElement('b'); b.textContent = v; d.append(s1, b); td.append(d); return b; };
