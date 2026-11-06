@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.63</title>
+<title>Amable PC v2.64</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1568,7 +1568,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.63';
+const VERSION = 'v2.64';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -1913,7 +1913,7 @@ function nativeStatus() {
 }
 // Aviso de app Android nueva (como en Amable Fit): al abrir la app, si la instalada es más vieja que la última publicada, ofrece descargarla.
 // Súbelo cada vez que se publique un APK con cambios nativos (junto con el archivo VERSION del repo del APK).
-const APK_ULTIMA = '2.62';
+const APK_ULTIMA = '2.64';
 const verMenor = (a, b) => { const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number); for (let i = 0; i < Math.max(x.length, y.length); i++) { const p = x[i] || 0, q = y[i] || 0; if (p !== q) return p < q; } return false; };
 function apkAviso() {
   let v = '';
@@ -3415,8 +3415,8 @@ let authMode = 'register';
 // Entrar con Google: el botón oficial de Google devuelve un certificado que el servidor comprueba con Google.
 // En la app de Android (WebView) Google no deja abrir su ventana, así que ahí no se ofrece.
 let googleListo = false;
-// En la app de Android el botón de Google de la web no puede abrir su ventana: se usa el selector de cuentas de Android (APK 2.62 o más nueva)
-const googleNativo = () => { try { return NATIVE && !!GOOGLE_CLIENT_ID && !!AUTH_API && /^\d+(\.\d+)*$/.test(AndroidPasos.version()) && !verMenor(AndroidPasos.version(), '2.62'); } catch (e) { return false; } };
+// En la app de Android el botón de Google de la web no puede abrir su ventana: se usa el selector de cuentas de Android (APK 2.64 o más nueva: la 2.62 se cerraba en Android 8)
+const googleNativo = () => { try { return NATIVE && !!GOOGLE_CLIENT_ID && !!AUTH_API && /^\d+(\.\d+)*$/.test(AndroidPasos.version()) && !verMenor(AndroidPasos.version(), '2.64'); } catch (e) { return false; } };
 window.googleNativo = (token, error) => {
   const err = t => { $('authErr').className = ''; $('authErr').textContent = t; };
   if (token) return googleCredencial({ credential: token });
