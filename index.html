@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.65</title>
+<title>Amable PC v2.66</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1572,7 +1572,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.65';
+const VERSION = 'v2.66';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -1917,7 +1917,7 @@ function nativeStatus() {
 }
 // Aviso de app Android nueva (como en Amable Fit): al abrir la app, si la instalada es más vieja que la última publicada, ofrece descargarla.
 // Súbelo cada vez que se publique un APK con cambios nativos (junto con el archivo VERSION del repo del APK).
-const APK_ULTIMA = '2.64';
+const APK_ULTIMA = '2.66';
 const verMenor = (a, b) => { const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number); for (let i = 0; i < Math.max(x.length, y.length); i++) { const p = x[i] || 0, q = y[i] || 0; if (p !== q) return p < q; } return false; };
 function apkAviso() {
   let v = '';
