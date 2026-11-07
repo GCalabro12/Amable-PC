@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.66</title>
+<title>Amable PC v2.67</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1572,7 +1572,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.66';
+const VERSION = 'v2.67';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -3118,6 +3118,8 @@ async function openPip() {
   const box = w.document.createElement('div');
   box.id = 'screen';
   box.style.cssText = 'position:fixed;inset:0;background:#0f172a;';
+  // la ventana flotante no tiene dirección propia: el logotipo (icon-192.png) se rompía; se le da la dirección completa
+  panel.querySelectorAll('img').forEach(im => { const u = im.src; if (u) im.src = u; });
   box.append(panel, toast, cele);
   // la ventana principal queda oculta y el navegador frena sus relojes: la cuenta atrás la lleva la ventana flotante
   w.setInterval(() => { try { scrEyeTick(); } catch (e) {} }, 500);
