@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.70</title>
+<title>Amable PC v2.71</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1267,6 +1267,17 @@
   </div>
 </div>
 
+<!-- Gestor de Gmail desde la app del móvil: se usa en el ordenador -->
+<div class="cele hidden" id="correoPcModal">
+  <div class="cele-box" style="border-color:#A78BFA;position:relative;padding-top:3.4rem">
+    <button class="f-back" id="correoBack" style="background:#7C3AED">← Inicio</button>
+    <div class="cele-title" style="color:#C4B5FD">✉️ Gestor de Gmail</div>
+    <p class="help-text">El gestor de Gmail se usa en el ordenador. <b>Copia esta dirección en el navegador de tu ordenador</b> (Chrome, Edge o Brave) y toca «Gestor de Gmail». Solo sirve para cuentas de Gmail.</p>
+    <div class="url-box" id="correoUrl"></div>
+    <div class="pc-acts"><button class="btn-outline" id="correoCopy">📋 Copiar</button><button class="btn-outline" id="correoSend">📤 Enviármela</button></div>
+  </div>
+</div>
+
 <!-- Aviso: hora de dormir -->
 <div class="cele hidden" id="focusModal">
   <div class="cele-box" style="border-color:#FB7185">
@@ -1579,7 +1590,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.70';
+const VERSION = 'v2.71';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -3486,6 +3497,7 @@ function helpLinks() {
 }
 // Recomendar la app: menú de compartir de Android (APK nueva), compartir del navegador o WhatsApp
 const shareApp = () => shareText('Te recomiendo Amable PC, una app que me está gustando mucho para cuidar tu cuerpo, tu mente y tu tiempo mientras trabajas con el ordenador. Pruébala aquí: https://gcalabro12.github.io/Amable-PC/');
+const WEB_URL = 'https://gcalabro12.github.io/Amable-PC/';
 const pcUrl = () => (NATIVE ? 'https://gcalabro12.github.io/Amable-PC/' : location.origin + location.pathname) + '?pantalla';
 const sharePc = () => shareText('Amable PC en el ordenador: para que usar tu PC sea amable. Tu PC, de forma amable contigo. Abre esta dirección en el navegador del PC y escribe el código de 4 números que te salga en el móvil. ' + pcUrl());
 async function shareText(text) {
@@ -4684,6 +4696,12 @@ function bindSalud() {
   $('shareApp').addEventListener('click', shareApp);
   $('mnPcLink').href = pcUrl(); $('mnPcLink').textContent = pcUrl().replace('https://', '');
   $('mnPcSend').addEventListener('click', sharePc);
+  $('correoBack').addEventListener('click', () => $('correoPcModal').classList.add('hidden'));
+  $('correoSend').addEventListener('click', () => shareText('Gestor de Gmail de Amable PC: abre esta dirección en el navegador del ordenador y toca «Gestor de Gmail». ' + WEB_URL));
+  $('correoCopy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(WEB_URL); $('correoCopy').textContent = '✓ Copiada'; setTimeout(() => { $('correoCopy').textContent = '📋 Copiar'; }, 2500); }
+    catch (e) { const rg = document.createRange(); rg.selectNode($('correoUrl')); getSelection().removeAllRanges(); getSelection().addRange(rg); $('correoCopy').textContent = 'Selecciónala y copia'; }
+  });
   document.addEventListener('click', e => { const b = e.target.closest('[data-how]'); if (b) howOpen(b.dataset.how); });
   $('stepsSnd').addEventListener('click', () => { stepsMuted = !stepsMuted; syncNative(); stepsSndTick(); });
   // Pausi
@@ -5108,7 +5126,7 @@ function initShell() {
   document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => {
     if (b.dataset.go === 'concentracion') { focusOpen(); return; }
     if (b.dataset.go === 'correo') { // página aparte; dentro de la app de Android la ventana de Google no funciona
-      if (NATIVE) { infoModal('✉️ Gestor de Gmail', 'El gestor de Gmail se usa en el ordenador: abre Amable PC en Chrome o Brave y toca «Gestor de Gmail». Solo sirve para cuentas de Gmail.'); return; }
+      if (NATIVE) { $('correoUrl').textContent = WEB_URL; $('correoPcModal').classList.remove('hidden'); return; }
       location.href = 'correo.html'; return;
     }
     fromHome = true; location.hash = b.dataset.go;
