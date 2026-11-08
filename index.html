@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.77</title>
+<title>Amable PC v2.78</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -527,6 +527,11 @@
   /* Fondo del modo claro: azul con degradado, más oscuro arriba y más clarito abajo (se escribe «al revés» porque el filtro invierte: sale #6FA8F2 → #B9D6FB → #DCEBFF) */
   html.claro { filter: invert(1) hue-rotate(180deg); background: #09182c linear-gradient(180deg, #2c65af 0%, #133055 55%, #09182c 100%) fixed; min-height: 100%; }
   html.claro body { background: transparent; }
+  /* Modo claro: el logotipo lleva el interior de la pantalla blanco y un perfil blanco por fuera (el azul del logo se confundía con el fondo azul) */
+  html.claro .lg-w { opacity: 1; }
+  html.claro .lg-c { fill: #fff; }
+  /* Versión en negro (el fondo azul de arriba es oscuro y no se leía; se escribe «al revés» por el filtro) */
+  html.claro .ver-badge { color: #f1f5f9; }
   html.claro #focusModal { background: #09182c linear-gradient(180deg, #2c65af 0%, #133055 55%, #09182c 100%); }
   html.claro img, html.claro video, html.claro iframe, html.claro canvas, html.claro .logo svg, html.claro .gp-seal svg, html.claro .tip svg { filter: invert(1) hue-rotate(180deg); }
   .pf-row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 15px; }
@@ -1632,7 +1637,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.77';
+const VERSION = 'v2.78';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -3324,7 +3329,7 @@ $('installBtn').addEventListener('click', async () => {
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js');
 
 // ---------- Logo (Claude Design) ----------
-const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true"><g transform="translate(256 256) scale(0.84) translate(-256 -262)"><g fill="none" stroke="#38BDF8" stroke-width="30" stroke-linecap="round"><rect x="84" y="150" width="344" height="236" rx="60"/><path d="M256 386 L256 420 M204 424 L308 424"/></g><circle cx="256" cy="148" r="56" fill="#0F172A"/><circle cx="256" cy="148" r="68" fill="#FACC15" opacity=".14"/><g fill="none" stroke="#4ADE80" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"><path d="M178 200 L256 252 L334 200"/><path d="M256 252 L256 298"/><path d="M222 352 L256 298 L290 352"/></g><circle cx="256" cy="148" r="40" fill="#FACC15"/></g></svg>`;
+const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true"><g transform="translate(256 256) scale(0.84) translate(-256 -262)"><rect class="lg-w" x="84" y="150" width="344" height="236" rx="60" fill="#fff" opacity="0"/><g class="lg-w" fill="none" stroke="#fff" stroke-width="48" stroke-linecap="round" opacity="0"><rect x="84" y="150" width="344" height="236" rx="60"/><path d="M256 386 L256 420 M204 424 L308 424"/></g><g fill="none" stroke="#38BDF8" stroke-width="30" stroke-linecap="round"><rect x="84" y="150" width="344" height="236" rx="60"/><path d="M256 386 L256 420 M204 424 L308 424"/></g><circle class="lg-c" cx="256" cy="148" r="56" fill="#0F172A"/><circle cx="256" cy="148" r="68" fill="#FACC15" opacity=".14"/><g fill="none" stroke="#4ADE80" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"><path d="M178 200 L256 252 L334 200"/><path d="M256 252 L256 298"/><path d="M222 352 L256 298 L290 352"/></g><circle cx="256" cy="148" r="40" fill="#FACC15"/></g></svg>`;
 
 // ---------- Fondo: automático / claro / oscuro ----------
 const TEMA_KEY = 'pcbm_tema', TEMA_FIJO = /[?&](pantalla|remoto)\b/.test(location.search);
