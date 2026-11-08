@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.76</title>
+<title>Amable PC v2.77</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -527,6 +527,7 @@
   /* Fondo del modo claro: azul con degradado, más oscuro arriba y más clarito abajo (se escribe «al revés» porque el filtro invierte: sale #6FA8F2 → #B9D6FB → #DCEBFF) */
   html.claro { filter: invert(1) hue-rotate(180deg); background: #09182c linear-gradient(180deg, #2c65af 0%, #133055 55%, #09182c 100%) fixed; min-height: 100%; }
   html.claro body { background: transparent; }
+  html.claro #focusModal { background: #09182c linear-gradient(180deg, #2c65af 0%, #133055 55%, #09182c 100%); }
   html.claro img, html.claro video, html.claro iframe, html.claro canvas, html.claro .logo svg, html.claro .gp-seal svg, html.claro .tip svg { filter: invert(1) hue-rotate(180deg); }
   .pf-row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 15px; }
   .pf-row span { color: #94A3B8; } .pf-row b { color: #F8FAFC; text-align: right; overflow-wrap: anywhere; }
@@ -1631,7 +1632,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.76';
+const VERSION = 'v2.77';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };

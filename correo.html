@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Gestor de Gmail · Amable PC</title>
 <meta name="theme-color" content="#0f172a">
+<script>
+// Mismo fondo que elige la persona en el menú de Amable PC (Automático / Claro / Oscuro)
+(function () { try { var t = localStorage.getItem('pcbm_tema'); var c = t === 'claro' || (t !== 'oscuro' && window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches); if (c) document.documentElement.classList.add('claro'); } catch (e) {} })();
+</script>
 <link rel="icon" href="icon-192.png">
 <style>
   :root { --bg: #0f172a; --card: #1E293B; --line: #334155; --txt: #F8FAFC; --mut: #94A3B8; --soft: #CBD5E1; --acc: #A78BFA; --ok: #4ADE80; --warn: #FACC15; --bad: #F87171; }
@@ -92,6 +96,10 @@
   .ft small { color: var(--mut); font-size: 13px; line-height: 1.4; }
   .fbadge { background: var(--acc); color: #0F172A; font-weight: 800; border-radius: 999px; padding: 2px 9px; font-size: 13px; }
   .fb { padding: 0 16px 16px; }
+  /* Modo claro: igual que en la pantalla de inicio (se invierten los colores y el fondo azul va escrito «al revés») */
+  html.claro { filter: invert(1) hue-rotate(180deg); background: #09182c linear-gradient(180deg, #2c65af 0%, #133055 55%, #09182c 100%) fixed; min-height: 100%; }
+  html.claro body { background: transparent; }
+  html.claro img, html.claro video, html.claro iframe { filter: invert(1) hue-rotate(180deg); }
 </style>
 </head>
 <body>
@@ -114,7 +122,7 @@
 <script>
 // Gestor de email de PC & Body-mind (fase 2): todo pasa en el navegador del usuario.
 // Gmail se conecta con el permiso de Google del propio usuario; no hay servidor ni se guardan correos fuera.
-const VERSION = 'v2.76';
+const VERSION = 'v2.77';
 // ID de cliente de Google (no es secreto). Lo crea Gustavo en Google Cloud: ver instrucciones.
 // Se pega una sola vez en la guía de configuración de esta página y queda guardado en este navegador.
 // ID de cliente común de Amable PC (proyecto «Amable PC» de Google Cloud, sin verificar: unas 100 personas). Quien ya pegó el suyo sigue con el suyo.
