@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.69</title>
+<title>Amable PC v2.70</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -577,10 +577,10 @@
   .f-chips { display: flex; gap: 8px; margin-top: 8px; }
   .f-chips button { width: auto; padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; background: rgba(251,113,133,0.15); border: 1px solid rgba(251,113,133,0.5); color: #FECDD3; }
   #fGo { width: 100%; margin-top: 16px; background: #E11D48; }
-  #fCancel { width: 100%; margin-top: 8px; }
   #focusModal .cele-box { position: relative; }
-  #focusModal.running .cele-box { padding-top: 3.4rem; }
-  .f-back { position: absolute; top: 12px; left: 12px; width: auto; margin: 0; padding: 6px 14px; font-size: 14px; font-weight: 700; background: transparent; border: 1px solid #475569; border-radius: 999px; color: #CBD5E1; }
+  #focusModal .cele-box { padding-top: 3.4rem; }
+  .f-back { position: absolute; top: 12px; left: 12px; width: auto; margin: 0; padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 700; background: #E11D48; border: 0; border-radius: 99px; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  .f-back:hover { filter: brightness(1.12); }
   .f-row2 { display: flex; gap: 10px; margin-top: 14px; }
   .f-row2 button { flex: 1; width: auto; margin: 0; }
   #fDone { width: 100%; margin-top: 10px; }
@@ -725,15 +725,14 @@
   .pact-hold { position: relative; width: 100%; overflow: hidden; background: #FACC15; color: #1E293B; font-weight: 800; font-size: 1.05rem; border: 0; border-radius: 14px; padding: 16px; touch-action: none; -webkit-user-select: none; user-select: none; font-family: system-ui, sans-serif; }
   .pact-fill { position: absolute; top: 0; bottom: 0; left: 0; width: 0; background: #F59E0B; }
   .pact-holdtxt { position: relative; }
-  .pact-box.viewing #pactName, .pact-box.viewing .pact-hold, .pact-box.viewing #pactBack { display: none; }
-  .pact-box:not(.viewing) #pactClose { display: none; }
-  #pactClose { width: 100%; color: #92400E; border-color: #D97706; }
+  .pact-box.viewing #pactName, .pact-box.viewing .pact-hold { display: none; }
   .f-pact { margin-top: 14px; padding: 12px; border-radius: 14px; border: 1px solid rgba(245,158,11,0.6); background: rgba(245,158,11,0.08); text-align: center; }
   .f-pact-title { font-weight: 800; color: #FCD34D; font-size: 0.95rem; }
   .f-pact-text { color: #E2E8F0; font-size: 0.95rem; line-height: 1.35; margin: 4px 0; }
   .f-pact-sign { font-family: 'Brush Script MT', 'Segoe Script', cursive; color: #86EFAC; font-size: 1.25rem; }
   #fPactView { width: 100%; margin-top: 8px; }
-  #pactBack { width: 100%; margin-top: 8px; color: #92400E; border-color: #D97706; }
+  #pactBack { background: #D97706; }
+  .pact-box { position: relative; padding-top: 3.4rem; }
   .pact-box.signed .pact-line { animation: pactInk 0.6s ease; }
   @keyframes pactInk { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
   /* círculo con altavoz: aparece mientras caminas y apaga o enciende el sonido de los pasos */
@@ -1271,7 +1270,7 @@
 <!-- Aviso: hora de dormir -->
 <div class="cele hidden" id="focusModal">
   <div class="cele-box" style="border-color:#FB7185">
-    <button id="fClose" class="f-back hidden">← Volver</button>
+    <button id="fClose" class="f-back">← Inicio</button>
     <div class="cele-title" style="color:#FDA4AF" id="focusTitle">🎯 Modo concentración</div>
     <button class="how-btn" data-how="focus">ℹ️ Cómo funciona</button>
     <div id="focusForm">
@@ -1288,7 +1287,6 @@
       <input id="fEvery" type="number" min="0" max="120" inputmode="numeric">
       <p class="hint" id="fErr" style="color:#F87171"></p>
       <button id="fGo">🎯 Empezar a concentrarme</button>
-      <button id="fCancel" class="btn-outline">← Volver al inicio</button>
     </div>
     <div id="focusRunning" class="hidden">
       <div class="f-now" id="fNow"></div>
@@ -1406,13 +1404,12 @@
 </div>
 <div class="cele hidden" id="pactModal">
   <div class="cele-box pact-box" id="pactBox">
+    <button class="f-back" id="pactBack">← Volver</button>
     <div class="pact-head">🤝 Mi compromiso</div>
     <div class="pact-text" id="pactText"></div>
     <input class="pact-name" id="pactName" type="text" maxlength="40" placeholder="Tu nombre y apellido" autocomplete="name" aria-label="Tu nombre para firmar">
     <div class="pact-sign"><div class="pact-line"><span id="pactSig"></span></div><div class="pact-time" id="pactTime"></div><div class="pact-lbl" id="pactLbl">Firma</div></div>
     <button class="pact-hold" id="pactHold"><span class="pact-fill" id="pactFill"></span><span class="pact-holdtxt" id="pactHoldTxt">✍️ Mantén pulsado para firmar</span></button>
-    <button class="btn-outline" id="pactBack">← Volver</button>
-    <button class="btn-outline" id="pactClose">Cerrar</button>
   </div>
 </div>
 <div class="cele hidden" id="infoModal">
@@ -1582,7 +1579,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.69';
+const VERSION = 'v2.70';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -4308,7 +4305,6 @@ function focusOpen() {
   const on = focusOn(), paused = focusPaused(), run = on || paused;
   $('focusForm').classList.toggle('hidden', run);
   $('focusRunning').classList.toggle('hidden', !run);
-  $('fClose').classList.toggle('hidden', !run);
   $('focusModal').classList.toggle('running', run);
   $('focusTitle').textContent = paused ? '⏸ Concentración en pausa' : on ? '🎯 Concentrado' : '🎯 Modo concentración';
   $('fPause').textContent = paused ? '▶ Reanudar' : '⏸ Pausar';
@@ -5206,7 +5202,6 @@ function homeOrderInit() {
   $('quietBtn').addEventListener('click', quietToggle);
   // modo concentración
   $('fGo').addEventListener('click', focusSubmit);
-  $('fCancel').addEventListener('click', focusClose);
   $('fClose').addEventListener('click', focusClose);
   $('fStop2').addEventListener('click', () => { focusClose(); focusStop(false); });
   $('fPause').addEventListener('click', focusPauseToggle);
@@ -5220,8 +5215,7 @@ function homeOrderInit() {
   hold.addEventListener('contextmenu', e => e.preventDefault());
   hold.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) pactDown(e); });
   hold.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') pactUp(); });
-  $('pactBack').addEventListener('click', () => { if (pactPending && pactPending.signed) return; pactHolding = false; pactAuto = false; cancelAnimationFrame(pactRaf); pactPending = null; $('pactModal').classList.add('hidden'); $('focusModal').classList.remove('hidden'); }); // vuelve al formulario con lo escrito
-  $('pactClose').addEventListener('click', () => { $('pactModal').classList.add('hidden'); $('pactBox').classList.remove('viewing'); });
+  $('pactBack').addEventListener('click', () => { if ($('pactBox').classList.contains('viewing')) { $('pactModal').classList.add('hidden'); $('pactBox').classList.remove('viewing'); return; } if (pactPending && pactPending.signed) return; pactHolding = false; pactAuto = false; cancelAnimationFrame(pactRaf); pactPending = null; $('pactModal').classList.add('hidden'); $('focusModal').classList.remove('hidden'); }); // vuelve al formulario con lo escrito
   $('fPactView').addEventListener('click', pactView);
   $('fDone').addEventListener('click', () => { focusClose(); focusStop(true); }); // tarea terminada: toca una pausa activa
   $('fMic').addEventListener('click', fMicToggle);

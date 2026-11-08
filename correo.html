@@ -114,7 +114,7 @@
 <script>
 // Gestor de email de PC & Body-mind (fase 2): todo pasa en el navegador del usuario.
 // Gmail se conecta con el permiso de Google del propio usuario; no hay servidor ni se guardan correos fuera.
-const VERSION = 'v2.69';
+const VERSION = 'v2.70';
 // ID de cliente de Google (no es secreto). Lo crea Gustavo en Google Cloud: ver instrucciones.
 // Se pega una sola vez en la guía de configuración de esta página y queda guardado en este navegador.
 // ID de cliente común de Amable PC (proyecto «Amable PC» de Google Cloud, sin verificar: unas 100 personas). Quien ya pegó el suyo sigue con el suyo.
@@ -259,7 +259,6 @@ function renderSetup(a) {
         <div class="ask">No es una contraseña: es seguro guardarlo. Solo se guarda en este navegador.</div></li>
     </ol>
     <p class="hint">La primera vez que conectes, Google dirá «Google no ha verificado esta aplicación». Es normal (es tu propia app en modo de prueba): pulsa <b>Configuración avanzada → Ir a (el nombre que le pusiste) (no seguro)</b> y acepta los permisos.</p>
-    <button class="btn2" onclick="location.href='./#home'">← Volver al inicio</button>
     <button class="btn2" onclick="location.href='?demo'">Ver cómo funciona con correos de ejemplo</button>
   </div>`;
   // cada paso: título (con ✓ y tachado si está hecho), cuerpo solo en el paso actual y botón «Ya lo he hecho»
