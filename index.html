@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.73</title>
+<title>Amable PC v2.74</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -518,6 +518,11 @@
   .mn-tema { display: flex; gap: 4px; padding: 4px; margin: 4px 0 2px; border-radius: 999px; background: rgba(148,163,184,0.16); }
   .mn-tema button { flex: 1; width: auto; margin: 0; padding: 9px 6px; border: 0; border-radius: 999px; background: none; color: #CBD5E1; font-weight: 800; font-size: 14px; cursor: pointer; }
   .mn-tema button.sel { background: #FACC15; color: #1E293B; }
+  /* Color institucional del menú: el del título «Menú». Títulos de sección y botones, todos igual */
+  #profileModal .mn-det > summary, #profileModal .mn-sub > summary { color: #FACC15; }
+  #profileModal .mn-body button:not(.a-eye):not(.mn-logout), #profileModal .help-btn, #profileModal .help-btn.wa, #profileModal .help-btn.share { background: #FACC15; color: #1E293B; border: 0; font-weight: 800; }
+  #profileModal .web-link { background: rgba(250,204,21,0.12); border: 1px solid #FACC15; color: #FACC15; }
+  #profileModal .mn-logout { background: rgba(148,163,184,0.16); border: 1px solid #334155; color: #FACC15; }
   /* Modo claro: se invierten los colores de toda la app y se devuelven a su color las imágenes, el vídeo y los logos */
   html.claro { filter: invert(1) hue-rotate(180deg); background: #fff; }
   html.claro img, html.claro video, html.claro iframe, html.claro canvas, html.claro .logo svg, html.claro .gp-seal svg, html.claro .tip svg { filter: invert(1) hue-rotate(180deg); }
@@ -1392,15 +1397,13 @@
   <details class="mn-det" id="mnShare" name="menu">
     <summary>📤 Recomendar Amable PC</summary>
     <div class="mn-body">
-      <div class="help-text">Amable PC también funciona en el navegador, en cualquier móvil u ordenador:</div>
-      <a class="web-link" href="https://gcalabro12.github.io/Amable-PC/" target="_blank" rel="noopener">🌐 gcalabro12.github.io/Amable-PC</a>
       <button class="help-btn share" id="shareApp">📤 Recomendar Amable PC</button>
     </div>
   </details>
   <details class="mn-det" id="mnPc" name="menu">
     <summary>🖥️ Amable PC en tu ordenador</summary>
     <div class="mn-body">
-      <div class="help-text"><b>Para que usar tu PC sea amable.</b> Tu PC, de forma amable contigo. Abre este enlace en el navegador de tu ordenador (Chrome, Edge o Brave) y escribe el código de 4 números que te salga:</div>
+      <div class="help-text"><b>¿Quieres usar Amable PC en tu ordenador?</b> Abre este enlace en el navegador de tu ordenador (Chrome, Edge o Brave) y escribe el código de 4 números que te salga:</div>
       <a class="web-link" id="mnPcLink" target="_blank" rel="noopener"></a>
       <button class="help-btn share" id="mnPcSend">📤 Enviarme el enlace para abrirlo en el ordenador</button>
     </div>
@@ -1599,7 +1602,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.73';
+const VERSION = 'v2.74';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
