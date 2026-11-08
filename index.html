@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.78</title>
+<title>Amable PC v2.79</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -532,7 +532,20 @@
   html.claro .lg-c { fill: #fff; }
   /* Versión en negro (el fondo azul de arriba es oscuro y no se leía; se escribe «al revés» por el filtro) */
   html.claro .ver-badge { color: #f1f5f9; }
-  html.claro #focusModal { background: #09182c linear-gradient(180deg, #2c65af 0%, #133055 55%, #09182c 100%); }
+  /* Modo claro: todas las ventanas emergentes con el mismo azul de degradado, sin transparencia */
+  html.claro .cele { background: #09182c linear-gradient(180deg, #2c65af 0%, #133055 55%, #09182c 100%); }
+  /* Modo claro: el filtro de inversión no deja sacar un rojo puro; este origen (#ff8480) sale como rojo ladrillo normal (#c34743), no rosa */
+  html.claro #home .home-btn.focus { --cr: 255,132,128; --c: #ff8480; }
+  html.claro .home-btn.focus .st { color: #ff8480; }
+  html.claro .home-btn.focus .ico { background: rgba(255,132,128,0.14); }
+  html.claro .home-btn.focus .ico svg circle { stroke: #ff8480; }
+  html.claro .home-btn.focus .ico svg circle:last-child { fill: #ff8480; }
+  html.claro #focusTitle { color: #ff8480 !important; }
+  html.claro #focusModal .cele-box { border-color: #ff8480 !important; }
+  html.claro .f-info { border-color: #ff8480; color: #ff8480; }
+  html.claro .f-chips button { background: rgba(255,132,128,0.15); border-color: rgba(255,132,128,0.5); }
+  html.claro .f-count { color: #ff8480; }
+  html.claro #fGo, html.claro .f-back, html.claro #fStop2 { background: #ff8480 !important; }
   html.claro img, html.claro video, html.claro iframe, html.claro canvas, html.claro .logo svg, html.claro .gp-seal svg, html.claro .tip svg { filter: invert(1) hue-rotate(180deg); }
   .pf-row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 15px; }
   .pf-row span { color: #94A3B8; } .pf-row b { color: #F8FAFC; text-align: right; overflow-wrap: anywhere; }
@@ -593,10 +606,10 @@
   .desk-now { font-size: 1.05rem; font-weight: 700; color: #F8FAFC; margin: 4px 0 6px; line-height: 1.45; }
   .desk-now small { display: block; font-weight: 500; color: #94A3B8; font-size: 0.85rem; }
   .focus-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-  .home-btn.focus .ico { background: rgba(251,113,133,0.14); }
-  .home-btn.focus .st { color: #FB7185; }
-  .home-btn.focus:hover, .home-btn.focus.on { border-color: rgba(251,113,133,0.65); }
-  .home-btn.focus.on { background: rgba(251,113,133,0.08); }
+  .home-btn.focus .ico { background: rgba(220,38,38,0.14); }
+  .home-btn.focus .st { color: #DC2626; }
+  .home-btn.focus:hover, .home-btn.focus.on { border-color: rgba(220,38,38,0.65); }
+  .home-btn.focus.on { background: rgba(220,38,38,0.08); }
   #focusModal { overflow-y: auto; align-items: flex-start; }
   #focusModal .cele-box { margin: auto; text-align: left; max-width: 420px; }
   #focusModal .cele-title { text-align: center; }
@@ -611,19 +624,19 @@
   @keyframes recPulse { 50% { box-shadow: 0 0 0 8px rgba(239,68,68,0.25); } }
   #focusModal label.f-lbl-info { display: flex !important; align-items: center; justify-content: space-between; gap: 8px; }
   #focusModal label.f-lbl-info .f-info { margin-left: auto; }
-  .f-info { flex: none; width: 24px; height: 24px; padding: 0; margin: 0; border-radius: 50%; background: transparent; border: 1.5px solid #FB7185; color: #FB7185; font-size: 14px; font-weight: 800; font-family: Georgia, serif; font-style: italic; line-height: 1; }
+  .f-info { flex: none; width: 24px; height: 24px; padding: 0; margin: 0; border-radius: 50%; background: transparent; border: 1.5px solid #DC2626; color: #DC2626; font-size: 14px; font-weight: 800; font-family: Georgia, serif; font-style: italic; line-height: 1; }
   .f-chips { display: flex; gap: 8px; margin-top: 8px; }
-  .f-chips button { width: auto; padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; background: rgba(251,113,133,0.15); border: 1px solid rgba(251,113,133,0.5); color: #FECDD3; }
-  #fGo { width: 100%; margin-top: 16px; background: #E11D48; }
+  .f-chips button { width: auto; padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; background: rgba(220,38,38,0.15); border: 1px solid rgba(220,38,38,0.5); color: #FCA5A5; }
+  #fGo { width: 100%; margin-top: 16px; background: #DC2626; }
   #focusModal .cele-box { position: relative; }
   #focusModal .cele-box { padding-top: 3.4rem; }
-  .f-back { position: absolute; top: 12px; left: 12px; width: auto; margin: 0; padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 700; background: #E11D48; border: 0; border-radius: 99px; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  .f-back { position: absolute; top: 12px; left: 12px; width: auto; margin: 0; padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 700; background: #DC2626; border: 0; border-radius: 99px; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
   .f-back:hover { filter: brightness(1.12); }
   .f-row2 { display: flex; gap: 10px; margin-top: 14px; }
   .f-row2 button { flex: 1; width: auto; margin: 0; }
   #fDone { width: 100%; margin-top: 10px; }
   .f-now { text-align: center; font-size: 1.15rem; font-weight: 700; color: #F8FAFC; margin: 8px 0; line-height: 1.4; }
-  .f-count { text-align: center; font-size: 2.4rem; font-weight: 800; color: #FB7185; font-variant-numeric: tabular-nums; }
+  .f-count { text-align: center; font-size: 2.4rem; font-weight: 800; color: #DC2626; font-variant-numeric: tabular-nums; }
   .eq-note { display: block; margin-top: 14px; padding: 12px 14px; border-radius: 16px; border: 1px dashed rgba(74,222,128,0.5); background: rgba(74,222,128,0.07); color: #CBD5E1; font-size: 14px; line-height: 1.45; text-align: center; }
   .eq-note a { color: #4ADE80; font-weight: 700; text-decoration: none; }
   .eq-copy { display: block; width: auto; margin: 10px auto 6px; padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; background: rgba(74,222,128,0.15); border: 1px solid rgba(74,222,128,0.55); color: #BBF7D0; }
@@ -637,7 +650,7 @@
   #home .home-btn { --cr: 56,189,248; border: 2px solid rgba(var(--cr), 0.6); background: linear-gradient(135deg, rgba(var(--cr), 0.18), rgba(var(--cr), 0.05) 70%), #1E293B; box-shadow: 0 8px 24px rgba(2,6,23,0.35), inset 0 1px 0 rgba(var(--cr), 0.18); }
   #home .home-btn.vista { --cr: 56,189,248; }
   #home .home-btn.pasos { --cr: 74,222,128; }
-  #home .home-btn.focus { --cr: 251,113,133; }
+  #home .home-btn.focus { --cr: 220,38,38; }
   #home .home-btn.correo { --cr: 167,139,250; }
   #home .home-btn:hover, #home .home-btn.dragging { background: linear-gradient(135deg, rgba(var(--cr), 0.26), rgba(var(--cr), 0.08) 70%), #1E293B; border-color: rgba(var(--cr), 0.95); }
   #home .home-btn.focus.on { background: linear-gradient(135deg, rgba(var(--cr), 0.3), rgba(var(--cr), 0.1) 70%), #1E293B; border-color: rgba(var(--cr), 1); }
@@ -752,7 +765,7 @@
   .break-skip:hover { background: rgba(30,41,59,0.9); }
   /* Inicio: el título de cada tarjeta lleva el color de la tarjeta y el texto de debajo va en blanco */
   #home .home-btn.vista { --c: #38BDF8; } #home .home-btn.bloques { --c: #FACC15; } #home .home-btn.pasos { --c: #4ADE80; }
-  #home .home-btn.agua { --c: #2DD4BF; } #home .home-btn.focus { --c: #FB7185; } #home .home-btn.correo { --c: #A78BFA; }
+  #home .home-btn.agua { --c: #2DD4BF; } #home .home-btn.focus { --c: #DC2626; } #home .home-btn.correo { --c: #A78BFA; }
   #home .home-btn h3 { color: var(--c); }
   #home .home-btn .st { color: #F8FAFC; }
   #home .home-btn .st::before { background: var(--c); }
@@ -814,7 +827,7 @@
   button, button:focus, button:active, .btn-outline:focus, .btn-outline:active { outline: 0 !important; -webkit-tap-highlight-color: rgba(0,0,0,0) !important; -webkit-touch-callout: none; }
   #focusModal button:focus, #focusModal button:active { box-shadow: none; }
   #fPause:active { background: #334155; }
-  #fStop2:active { background: #BE123C !important; }
+  #fStop2:active { background: #B91C1C !important; }
   /* registro / entrada */
   #authModal { z-index: 200; background: #0b1220; overflow-y: auto; align-items: flex-start; } /* arriba, para que si el contenido es más alto que la pantalla no se corte el principio */
   #authModal .cele-box { margin: auto; }
@@ -890,7 +903,7 @@
       <button class="home-btn bloques" data-go="bloques"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#FACC15" stroke-width="5.5" stroke-linecap="round"><path d="M36.78 9.50 A23 23 0 0 1 43.50 51.92"/><path d="M36.78 54.50 A23 23 0 0 1 14.91 47.39"/><path d="M10.99 41.35 A23 23 0 0 1 27.22 9.50"/><path d="M32 32 L32 20 M32 32 L40 37"/></g><circle cx="32" cy="32" r="3.2" fill="#FACC15"/></svg></span><span><h3 class="h-row">Bloques de tiempo<span class="blk-left hidden" id="homeBlkLeft" title="Tiempo que falta para terminar el bloque"></span></h3><span class="st" id="homeBloques">De 5:30 a 22:00</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
       <button class="home-btn pasos" data-go="pasos"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true"><g transform="translate(21 38) rotate(-12)"><ellipse cx="0" cy="-6" rx="7.5" ry="11" fill="none" stroke="#4ADE80" stroke-width="4.5"/><ellipse cx="0" cy="12" rx="5.5" ry="5" fill="none" stroke="#4ADE80" stroke-width="4.5"/></g><g transform="translate(43 24) rotate(12)"><ellipse cx="0" cy="-6" rx="7.5" ry="11" fill="none" stroke="#4ADE80" stroke-width="4.5"/><ellipse cx="0" cy="12" rx="5.5" ry="5" fill="none" stroke="#4ADE80" stroke-width="4.5"/></g></svg></span><span><h3>Pasos en tu jornada</h3><span class="st" id="homeSteps">0 pasos hoy</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
       <button class="home-btn agua" data-go="agua"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 7 C25 19 15 29 15 40 a17 17 0 0 0 34 0 C49 29 39 19 32 7z" fill="none" stroke="#2DD4BF" stroke-width="5.5" stroke-linejoin="round"/><path d="M24 42 a8 8 0 0 0 8 8" fill="none" stroke="#2DD4BF" stroke-width="4.5" stroke-linecap="round"/></svg></span><span><h3>Agua y movimiento</h3><span class="st" id="homeAgua">Avisos para beber y moverte</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button class="home-btn focus" data-go="concentracion"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="none" stroke="#FB7185" stroke-width="5.5"/><circle cx="32" cy="32" r="12" fill="none" stroke="#FB7185" stroke-width="5.5"/><circle cx="32" cy="32" r="3.5" fill="#FB7185"/></svg></span><span><h3>Modo concentración</h3><span class="st" id="homeFocus">Tarea y tiempo, sin avisos</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="home-btn focus" data-go="concentracion"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="none" stroke="#DC2626" stroke-width="5.5"/><circle cx="32" cy="32" r="12" fill="none" stroke="#DC2626" stroke-width="5.5"/><circle cx="32" cy="32" r="3.5" fill="#DC2626"/></svg></span><span><h3>Modo concentración</h3><span class="st" id="homeFocus">Tarea y tiempo, sin avisos</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
       <button class="home-btn correo" data-go="correo"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="9" y="15" width="46" height="34" rx="7" fill="none" stroke="#A78BFA" stroke-width="5.5"/><path d="M12 20 L32 35 L52 20" fill="none" stroke="#A78BFA" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><h3>Gestor de Gmail</h3><span class="st" id="homeCorreo">Solo para Gmail: etiquetas y urgentes</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
     </div>
     <div class="tip"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" aria-hidden="true"><ellipse cx="100" cy="204" rx="50" ry="7" fill="#1E293B" opacity=".9"/><path d="M100 50 L100 34" stroke="#4ADE80" stroke-width="6" stroke-linecap="round"/><circle cx="100" cy="27" r="16" fill="#FACC15" opacity=".18"/><circle cx="100" cy="27" r="9" fill="#FACC15"/><g fill="none" stroke="#4ADE80" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><path d="M42 104 L24 120"/><path d="M158 100 L176 70"/><path d="M82 146 L80 182"/><path d="M118 146 L120 182"/></g><circle cx="24" cy="120" r="7" fill="#4ADE80"/><circle cx="176" cy="70" r="7" fill="#4ADE80"/><rect x="62" y="180" width="30" height="16" rx="8" fill="#F8FAFC"/><rect x="108" y="180" width="30" height="16" rx="8" fill="#F8FAFC"/><rect x="62" y="190" width="30" height="6" rx="3" fill="#4ADE80"/><rect x="108" y="190" width="30" height="6" rx="3" fill="#4ADE80"/><rect x="38" y="50" width="124" height="98" rx="30" fill="#38BDF8"/><rect x="50" y="62" width="100" height="74" rx="20" fill="#0F172A"/><ellipse cx="84" cy="94" rx="9" ry="11" fill="#F8FAFC"/><ellipse cx="116" cy="94" rx="9" ry="11" fill="#F8FAFC"/><circle cx="86" cy="96" r="5" fill="#0F172A"/><circle cx="118" cy="96" r="5" fill="#0F172A"/><circle cx="88" cy="93" r="1.8" fill="#F8FAFC"/><circle cx="120" cy="93" r="1.8" fill="#F8FAFC"/><path d="M90 113 Q100 122 110 113" fill="none" stroke="#F8FAFC" stroke-width="4.5" stroke-linecap="round"/><circle cx="68" cy="116" r="6" fill="#FB7185" opacity=".7"/><circle cx="132" cy="116" r="6" fill="#FB7185" opacity=".7"/></svg><p><b>Pausi dice:</b> <span id="pausiTip">medio vaso de agua también es una pausa.</span><span class="tip-hint">Tócame para oír otro consejo</span></p></div>
@@ -1329,9 +1342,9 @@
 
 <!-- Aviso: hora de dormir -->
 <div class="cele hidden" id="focusModal">
-  <div class="cele-box" style="border-color:#FB7185">
+  <div class="cele-box" style="border-color:#DC2626">
     <button id="fClose" class="f-back">← Inicio</button>
-    <div class="cele-title" style="color:#FDA4AF" id="focusTitle">🎯 Modo concentración</div>
+    <div class="cele-title" style="color:#DC2626" id="focusTitle">🎯 Modo concentración</div>
     <button class="how-btn" data-how="focus">ℹ️ Cómo funciona</button>
     <div id="focusForm">
       <label for="fTask">¿Qué vas a hacer?</label>
@@ -1354,7 +1367,7 @@
       <div class="hint" style="text-align:center" id="fNext"></div>
       <div class="f-row2">
         <button id="fPause" class="btn-outline">⏸ Pausar</button>
-        <button id="fStop2" style="background:#E11D48">⏹ Parar</button>
+        <button id="fStop2" style="background:#DC2626">⏹ Parar</button>
       </div>
       <button id="fDone" style="background:#16A34A">✅ Tarea finalizada</button>
       <div class="f-pact hidden" id="fPactCard">
@@ -1637,7 +1650,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.78';
+const VERSION = 'v2.79';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
