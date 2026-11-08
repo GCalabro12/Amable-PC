@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.68</title>
+<title>Amable PC v2.69</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -502,9 +502,9 @@
   .mn-x { width: 40px; height: 40px; margin: 0; padding: 0; background: transparent; border: 0; color: #E2E8F0; font-size: 22px; }
   /* el menú es una sola ventana; cada parte se pliega y se despliega */
   .mn-det { border: 1px solid #334155; border-radius: 14px; margin-top: 10px; background: rgba(15,23,42,0.55); }
-  .mn-det > summary, .mn-sub > summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 14px; font-weight: 800; font-size: 15px; color: #F8FAFC; }
+  .mn-det > summary, .mn-sub > summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: flex-start; gap: 8px; padding: 12px 14px; font-weight: 800; font-size: 15px; color: #F8FAFC; }
   .mn-det > summary::-webkit-details-marker, .mn-sub > summary::-webkit-details-marker { display: none; }
-  .mn-det > summary::after, .mn-sub > summary::after { content: '▾'; color: #94A3B8; transition: transform 0.2s; }
+  .mn-det > summary::after, .mn-sub > summary::after { content: '▾'; color: #94A3B8; transition: transform 0.2s; margin-left: auto; }
   .mn-det[open] > summary::after, .mn-sub[open] > summary::after { transform: rotate(180deg); }
   .mn-body { padding: 0 14px 14px; }
   .mn-sub { border: 1px solid #334155; border-radius: 12px; margin-top: 10px; background: #1E293B; }
@@ -747,6 +747,11 @@
   .help-btn.wa { background: #16A34A; }
   .help-small { color: #94A3B8; font-size: 12px; margin-top: 10px; line-height: 1.4; }
   body.remote .help-card { display: none; }
+  /* Iconos de línea: los emojis de la pantalla se dibujan como iconos de trazo (ver «Iconos de línea» en el script) */
+  .ic { width: 1.15em; height: 1.15em; vertical-align: -0.2em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; margin-right: 0.12em; }
+  #profileModal input[type=checkbox] { width: auto; flex: none; }
+  #profileModal label.check { display: flex; align-items: flex-start; gap: 8px; margin-top: 12px; }
+  #profileModal input[type=time] { width: 100%; }
   .web-link { display: block; margin: 2px 0 4px; padding: 10px; border-radius: 14px; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.5); color: #7DD3FC; font-weight: 800; font-size: 16px; text-decoration: none; overflow-wrap: anywhere; }
   .help-btn.share { width: 100%; border: 0; background: #0EA5E9; cursor: pointer; font-family: inherit; }
   .run-ico { display: none; }
@@ -835,7 +840,7 @@
     <div class="home-btns">
       <button class="home-btn vista" data-go="vista"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#38BDF8" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 34 C15 19 49 19 58 34 C49 49 15 49 6 34Z"/><path d="M20 12 L23 17 M32 8 L32 14 M44 12 L41 17"/></g><circle cx="32" cy="34" r="8.5" fill="#38BDF8"/><circle cx="35" cy="31" r="2.6" fill="#0F172A"/></svg></span><span><h3>Pausa de la vista</h3><span class="st" id="homeVista">Regla 20-20-20</span><span class="bar"><span id="homeVistaBar"></span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
       <button class="home-btn bloques" data-go="bloques"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#FACC15" stroke-width="5.5" stroke-linecap="round"><path d="M36.78 9.50 A23 23 0 0 1 43.50 51.92"/><path d="M36.78 54.50 A23 23 0 0 1 14.91 47.39"/><path d="M10.99 41.35 A23 23 0 0 1 27.22 9.50"/><path d="M32 32 L32 20 M32 32 L40 37"/></g><circle cx="32" cy="32" r="3.2" fill="#FACC15"/></svg></span><span><h3 class="h-row">Bloques de tiempo<span class="blk-left hidden" id="homeBlkLeft" title="Tiempo que falta para terminar el bloque"></span></h3><span class="st" id="homeBloques">De 5:30 a 22:00</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button class="home-btn pasos" data-go="pasos"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true"><g transform="translate(21 38) rotate(-12)"><ellipse cx="0" cy="-6" rx="7.5" ry="11" fill="#4ADE80"/><ellipse cx="0" cy="11.5" rx="5.5" ry="5" fill="#4ADE80"/></g><g transform="translate(43 24) rotate(12)"><ellipse cx="0" cy="-6" rx="7.5" ry="11" fill="#4ADE80"/><ellipse cx="0" cy="11.5" rx="5.5" ry="5" fill="#4ADE80"/></g></svg></span><span><h3>Pasos en tu jornada</h3><span class="st" id="homeSteps">0 pasos hoy</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="home-btn pasos" data-go="pasos"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true"><g transform="translate(21 38) rotate(-12)"><ellipse cx="0" cy="-6" rx="7.5" ry="11" fill="none" stroke="#4ADE80" stroke-width="4.5"/><ellipse cx="0" cy="12" rx="5.5" ry="5" fill="none" stroke="#4ADE80" stroke-width="4.5"/></g><g transform="translate(43 24) rotate(12)"><ellipse cx="0" cy="-6" rx="7.5" ry="11" fill="none" stroke="#4ADE80" stroke-width="4.5"/><ellipse cx="0" cy="12" rx="5.5" ry="5" fill="none" stroke="#4ADE80" stroke-width="4.5"/></g></svg></span><span><h3>Pasos en tu jornada</h3><span class="st" id="homeSteps">0 pasos hoy</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
       <button class="home-btn agua" data-go="agua"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 7 C25 19 15 29 15 40 a17 17 0 0 0 34 0 C49 29 39 19 32 7z" fill="none" stroke="#2DD4BF" stroke-width="5.5" stroke-linejoin="round"/><path d="M24 42 a8 8 0 0 0 8 8" fill="none" stroke="#2DD4BF" stroke-width="4.5" stroke-linecap="round"/></svg></span><span><h3>Agua y movimiento</h3><span class="st" id="homeAgua">Avisos para beber y moverte</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
       <button class="home-btn focus" data-go="concentracion"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="none" stroke="#FB7185" stroke-width="5.5"/><circle cx="32" cy="32" r="12" fill="none" stroke="#FB7185" stroke-width="5.5"/><circle cx="32" cy="32" r="3.5" fill="#FB7185"/></svg></span><span><h3>Modo concentración</h3><span class="st" id="homeFocus">Tarea y tiempo, sin avisos</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
       <button class="home-btn correo" data-go="correo"><span class="grip" title="Arrastra para cambiar el orden" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="2" r="1.4"/><circle cx="7.5" cy="2" r="1.4"/><circle cx="2.5" cy="6" r="1.4"/><circle cx="7.5" cy="6" r="1.4"/><circle cx="2.5" cy="10" r="1.4"/><circle cx="7.5" cy="10" r="1.4"/><circle cx="2.5" cy="14" r="1.4"/><circle cx="7.5" cy="14" r="1.4"/></svg></span><span class="ico"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="9" y="15" width="46" height="34" rx="7" fill="none" stroke="#A78BFA" stroke-width="5.5"/><path d="M12 20 L32 35 L52 20" fill="none" stroke="#A78BFA" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><h3>Gestor de Gmail</h3><span class="st" id="homeCorreo">Solo para Gmail: etiquetas y urgentes</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
@@ -899,12 +904,7 @@
     <label for="vWalkRest">Pedir la pausa de movimiento solo si llevas sentado al menos (minutos; 0 = sin esperar)</label>
     <input type="number" id="vWalkRest" min="0" max="120" inputmode="numeric">
     <div class="hint">No te pide levantarte si estás caminando o de pie: cuenta el tiempo desde la última vez que diste un paso (o estuviste de pie).</div>
-    <label class="check" style="margin-top:14px"><input type="checkbox" id="deOn"> 🌇 Cierre de jornada (resumen del día y «apaga el ordenador»)</label>
-    <label class="check"><input type="checkbox" id="niOn"> 🌙 Ojos de noche (recordar poner el ordenador en modo noche, con f.lux; en el móvil ya es automático)</label>
-    <div class="row">
-      <div><label for="deTime">Cierre de jornada a las</label><input type="time" id="deTime"></div>
-      <div><label for="niTime">Ojos de noche a las</label><input type="time" id="niTime"></div>
-    </div>
+    <div class="hint" style="margin-top:14px">El aviso de <b>fin de jornada</b> y los <b>ojos de noche</b> se programan en el menú ☰, en <b>Avisos</b>.</div>
     <button class="btn-outline mt" id="vTest">Probar una pausa ahora</button>
     </details>
   </div>
@@ -1360,13 +1360,15 @@
       <button class="mn-logout" id="menuLogout">↪ Cerrar sesión</button>
     </div>
   </details>
-  <details class="mn-det hidden" id="mnLife" name="menu">
-    <summary>🌱 Pasar mis bloques a Amable Life</summary>
+  <details class="mn-det" id="mnAvisos" name="menu">
+    <summary>🔔 Avisos</summary>
     <div class="mn-body">
-      <div class="eq-note" style="margin-top:0">Tus bloques de tiempo antiguos se pueden pasar a la app <a href="https://gcalabro12.github.io/Equilibra/" target="_blank" rel="noopener">Amable Life →</a>, que ahora se encarga del agua y del trabajo en bloques.
-        <button class="eq-copy" id="eqCopy">📋 Copiar mis bloques para Amable Life</button>
-        <textarea class="eq-json hidden" id="eqJson" readonly aria-label="Tus bloques para pegar en Amable Life"></textarea>
-        <div class="eq-hint" id="eqHint">Abre Amable Life → Ajustes → Bloques de Amable PC → pega el texto y toca «Traer el texto pegado».</div></div>
+      <div class="help-text">Elige a qué hora te avisa Amable PC al final del día.</div>
+      <label class="check"><input type="checkbox" id="deOn"> 🌇 Fin de jornada: resumen del día y «guarda tu trabajo y apaga el ordenador»</label>
+      <label for="deTime">Avisarme a las</label><input type="time" id="deTime">
+      <label class="check" style="margin-top:16px"><input type="checkbox" id="niOn"> 🌙 Ojos de noche: recordar poner el ordenador en modo noche (con f.lux; en el móvil ya es automático)</label>
+      <label for="niTime">Avisarme a las</label><input type="time" id="niTime">
+      <div class="hint" style="margin-top:14px">Los demás avisos se programan en su sitio: la pausa de vista y la de movimiento, en <b>Pausa de la vista → Programar los cronómetros</b>; las voces y los avisos de caminar, en <b>Pasos en tu jornada</b>.</div>
     </div>
   </details>
   <details class="mn-det" id="mnShare" name="menu">
@@ -1375,6 +1377,14 @@
       <div class="help-text">Amable PC también funciona en el navegador, en cualquier móvil u ordenador:</div>
       <a class="web-link" href="https://gcalabro12.github.io/Amable-PC/" target="_blank" rel="noopener">🌐 gcalabro12.github.io/Amable-PC</a>
       <button class="help-btn share" id="shareApp">📤 Recomendar Amable PC</button>
+    </div>
+  </details>
+  <details class="mn-det" id="mnPc" name="menu">
+    <summary>🖥️ Amable PC en tu ordenador</summary>
+    <div class="mn-body">
+      <div class="help-text"><b>Para que usar tu PC sea amable.</b> Tu PC, de forma amable contigo. Abre este enlace en el navegador de tu ordenador (Chrome, Edge o Brave) y escribe el código de 4 números que te salga:</div>
+      <a class="web-link" id="mnPcLink" target="_blank" rel="noopener"></a>
+      <button class="help-btn share" id="mnPcSend">📤 Enviarme el enlace para abrirlo en el ordenador</button>
     </div>
   </details>
   <details class="mn-det" id="mnAyuda" name="menu">
@@ -1572,7 +1582,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.68';
+const VERSION = 'v2.69';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -3127,6 +3137,7 @@ async function openPip() {
   // la ventana principal queda oculta y el navegador frena sus relojes: la cuenta atrás la lleva la ventana flotante
   w.setInterval(() => { try { scrEyeTick(); } catch (e) {} }, 500);
   w.document.body.appendChild(box);
+  iconWatch(w.document);
   $('sPip').textContent = $('sPairPip').textContent = '🗗 Cerrar ventana flotante';
   w.addEventListener('pagehide', () => {
     if (pipUpdPending) setTimeout(checkUpdate, 300);
@@ -3265,6 +3276,98 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.se
 // ---------- Logo (Claude Design) ----------
 const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true"><g transform="translate(256 256) scale(0.84) translate(-256 -262)"><g fill="none" stroke="#38BDF8" stroke-width="30" stroke-linecap="round"><rect x="84" y="150" width="344" height="236" rx="60"/><path d="M256 386 L256 420 M204 424 L308 424"/></g><circle cx="256" cy="148" r="56" fill="#0F172A"/><circle cx="256" cy="148" r="68" fill="#FACC15" opacity=".14"/><g fill="none" stroke="#4ADE80" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"><path d="M178 200 L256 252 L334 200"/><path d="M256 252 L256 298"/><path d="M222 352 L256 298 L290 352"/></g><circle cx="256" cy="148" r="40" fill="#FACC15"/></g></svg>`;
 
+// ---------- Iconos de línea ----------
+// Todos los emojis que salen en la pantalla se cambian por iconos de trazo (mismo estilo en todas las apps Amable).
+const IC = {
+  '🔊': '<path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/>',
+  '🔈': '<path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/>',
+  '🔇': '<path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m22 9-6 6M16 9l6 6"/>',
+  '🖥': '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',
+  '👁': '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  '⏱': '<path d="M10 2h4M12 14l3-3"/><circle cx="12" cy="14" r="8"/>',
+  '🤸': '<circle cx="12" cy="4.5" r="1.8"/><path d="M12 7.5v6M5 4.5l7 4 7-4M9 21l3-7.5 3 7.5"/>',
+  '🌇': '<path d="M12 10V2M4.9 10.9l1.4 1.4M2 18h2M20 18h2M19.1 10.9l-1.4 1.4M22 22H2M16 6l-4 4-4-4M16 18a4 4 0 0 0-8 0"/>',
+  '🌙': '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>',
+  '💧': '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5S12.5 5 12 2.5C11.5 5 10 7.4 8 9.5 6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>',
+  '🤖': '<rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V5M9 14v1.5M15 14v1.5"/><circle cx="12" cy="3.5" r="1.2"/>',
+  '📋': '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>',
+  '📤': '<path d="M12 15V3M7 8l5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/>',
+  '📅': '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  '👣': '<path d="M8 3.5c2 0 3 2 3 4.5s-1 4.5-3 4.5S5 10.5 5 8s1-4.5 3-4.5z"/><path d="M6 16h4v1.5a2 2 0 0 1-4 0z"/><path d="M16 8.5c2 0 3 2 3 4.5s-1 4.5-3 4.5-3-2-3-4.5 1-4.5 3-4.5z"/><path d="M14 21h4"/>',
+  '🪑': '<path d="M7 3v9h10M7 12H5M17 12v9M7 12v9M5 17h14"/>',
+  '🧍': '<circle cx="12" cy="4.5" r="2"/><path d="M12 8v7M8 11h8M9 21l3-6 3 6"/>',
+  '🎵': '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  '🚶': '<circle cx="13" cy="4.5" r="2"/><path d="m12 8-3 4 3 3-1 6M12 8l4 3M9 12l-3 2M12 15l4 1"/>',
+  '📱': '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>',
+  '🔔': '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  '📊': '<path d="M3 3v18h18"/><path d="M8 17v-5M13 17V8M18 17v-9"/>',
+  '🎯': '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  '⏸': '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>',
+  '⏹': '<rect x="5" y="5" width="14" height="14" rx="2"/>',
+  '✅': '<circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/>',
+  '🤝': '<path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.9-3.9a3 3 0 0 0-4.2 0l-.9.9a1 1 0 1 1-3-3l2.8-2.8a5.8 5.8 0 0 1 7.1-.9l.5.3a2 2 0 0 0 1.4.3L21 4"/><path d="m21 3 1 11h-2M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3M3 4h8"/>',
+  '📜': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/>',
+  '👤': '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  '🔑': '<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M14 9l2 2"/>',
+  '✉': '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
+  '🌱': '<path d="M12 22V12"/><path d="M12 12c0-4-3-6-7-6 0 4 3 6 7 6zM12 14c0-3 2-5 6-5 0 3-2 5-6 5z"/>',
+  '🌐': '<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>',
+  '💬': '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  '✍': '<path d="M17 3l4 4L7 21H3v-4z"/>',
+  '📵': '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M3 3l18 18"/>',
+  '🎬': '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 8h4M3 12h4M3 16h4M17 8h4M17 12h4M17 16h4"/>',
+  '⛶': '<path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/>',
+  '🗗': '<rect x="2" y="4" width="20" height="14" rx="2"/><rect x="12" y="11" width="8" height="5" rx="1"/>',
+  '🎤': '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/>',
+  '⚙': '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+  '⚠': '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  '⬇': '<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',
+  '🔗': '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+  '🔋': '<rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 11v2"/>',
+  '🔒': '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  '🏆': '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',
+  '💡': '<path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.7.6 1 1.4 1 2.3h6c0-.9.3-1.7 1-2.3A7 7 0 0 0 12 2z"/>',
+  '🫁': '<path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2M9.6 4.6A2 2 0 1 1 11 8H2M12.6 19.4A2 2 0 1 0 14 16H2"/>',
+  '✋': '<path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-5.9-2.4L3.4 16a2 2 0 0 1 3-2.7L8 15"/>',
+  '⚡': '<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',
+  '🆘': '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="m4.9 4.9 4.2 4.2M14.9 14.9l4.2 4.2M14.9 9.1l4.2-4.2M4.9 19.1l4.2-4.2"/>'
+};
+const IC_ALIAS = { '⏲': '⏱', '🏃': '🚶', '🙆': '🤸', '🦵': '🚶', '📲': '📱', '🎶': '🎵', '📄': '📜', '👋': '✋' };
+const IC_KEYS = Object.keys(IC).concat(Object.keys(IC_ALIAS)).join('|');
+const IC_TEST = new RegExp('(?:' + IC_KEYS + ')'), IC_G = new RegExp('(' + IC_KEYS + ')\\uFE0F?', 'g');
+const IC_SKIP = new Set(['OPTION', 'SCRIPT', 'STYLE', 'TEXTAREA', 'TITLE', 'INPUT', 'SELECT', 'NOSCRIPT']);
+function iconify(root) {
+  if (!root || (root.isConnected === false)) return;
+  const doc = root.ownerDocument || root, list = [];
+  if (root.nodeType === 3) list.push(root);
+  else { const w = doc.createTreeWalker(root, 4); for (let n = w.nextNode(); n; n = w.nextNode()) list.push(n); }
+  list.forEach(n => {
+    const v = n.nodeValue, p = n.parentNode;
+    if (!p || !IC_TEST.test(v) || IC_SKIP.has(String(p.nodeName).toUpperCase()) || p.namespaceURI === 'http://www.w3.org/2000/svg') return;
+    const frag = doc.createDocumentFragment(); let last = 0, m; IC_G.lastIndex = 0;
+    while ((m = IC_G.exec(v))) {
+      if (m.index > last) frag.append(v.slice(last, m.index));
+      const s = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('class', 'ic'); s.setAttribute('aria-hidden', 'true');
+      s.innerHTML = IC[IC_ALIAS[m[1]] || m[1]];
+      frag.append(s); last = m.index + m[0].length;
+    }
+    if (last < v.length) frag.append(v.slice(last));
+    p.replaceChild(frag, n);
+  });
+}
+function iconWatch(doc) {
+  try {
+    iconify(doc.body);
+    const MO = (doc.defaultView && doc.defaultView.MutationObserver) || MutationObserver;
+    new MO(ms => ms.forEach(m => {
+      if (m.type === 'characterData') iconify(m.target);
+      else m.addedNodes.forEach(nd => { if (nd.nodeType === 1 || nd.nodeType === 3) iconify(nd); });
+    })).observe(doc.body, { childList: true, characterData: true, subtree: true });
+  } catch (e) {}
+}
+iconWatch(document);
+
 // ---------- Navegación: inicio y secciones ----------
 // Bloques de tiempo y Agua y movimiento se han pasado a Equilibra (20/10/2026): sus direcciones llevan al inicio
 const VIEWS = { '': 'home', vista: 'vista', bloques: 'home', pasos: 'app', pc: 'pc', agua: 'home' };
@@ -3386,6 +3489,8 @@ function helpLinks() {
 }
 // Recomendar la app: menú de compartir de Android (APK nueva), compartir del navegador o WhatsApp
 const shareApp = () => shareText('Te recomiendo Amable PC, una app que me está gustando mucho para cuidar tu cuerpo, tu mente y tu tiempo mientras trabajas con el ordenador. Pruébala aquí: https://gcalabro12.github.io/Amable-PC/');
+const pcUrl = () => (NATIVE ? 'https://gcalabro12.github.io/Amable-PC/' : location.origin + location.pathname) + '?pantalla';
+const sharePc = () => shareText('Amable PC en el ordenador: para que usar tu PC sea amable. Tu PC, de forma amable contigo. Abre esta dirección en el navegador del PC y escribe el código de 4 números que te salga en el móvil. ' + pcUrl());
 async function shareText(text) {
   if (NATIVE) { try { AndroidPasos.share(text); return; } catch (e) {} }
   if (!NATIVE && navigator.share) { try { await navigator.share({ text }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
@@ -3570,7 +3675,7 @@ async function perfilAbrir() {
   const a = acctGet();
   const td = $('pfData'); td.innerHTML = '';
   helpLinks();
-  $('pfPassBox').open = false; $('pfEmailBox').open = false; ['mnPerfil', 'mnLife', 'mnShare', 'mnAyuda', 'mnLegal'].forEach(id => { $(id).open = false; });
+  $('pfPassBox').open = false; $('pfEmailBox').open = false; ['mnPerfil', 'mnAvisos', 'mnShare', 'mnPc', 'mnAyuda', 'mnLegal'].forEach(id => { $(id).open = false; });
   $('profileModal').classList.remove('hidden'); $('menuBtn').setAttribute('aria-expanded', 'true');
   if (!a) return;
   const fila = (k, v) => { const d = document.createElement('div'); d.className = 'pf-row'; const s1 = document.createElement('span'); s1.textContent = k; const b = document.createElement('b'); b.textContent = v; d.append(s1, b); td.append(d); return b; };
@@ -3650,12 +3755,9 @@ function homeStepsRender() {
   const h3 = document.querySelector('.home-btn.pasos h3'); if (h3) h3.textContent = D.has === true ? 'Pasos en mesa elevadora' : 'Pasos en tu jornada';
   $('homeSteps').textContent = fmt(today().steps) + ' pasos hoy' + (D.has === true ? (D.mode === 'stand' ? ' - de pie' : ' - sentado') : '') + restStatus();
 }
-// La sección del menú para pasar los bloques solo sale a quien tiene bloques guardados que pasar a Amable Life
-const hasBloquesData = () => Object.values((db.bloques && db.bloques.days) || {}).some(d => Object.values(d || {}).some(a => a && a.length));
 function renderHome() {
   homeVistaRender();
   helpLinks();
-  $('mnLife').classList.toggle('hidden', !hasBloquesData());
   homeStepsRender();
   const hs = saludToday();
   $('homeAgua').textContent = `${fmtVasos(hs.agua)}/${db.salud.aguaGoal} vasos · ${hs.mov} ${hs.mov === 1 ? 'pausa activa' : 'pausas activas'}`;
@@ -4378,7 +4480,7 @@ const HOW = {
     'De vez en cuando la pausa se convierte en una <b>pausa de movimiento</b>: estiramientos, manos y muñecas, piernas o caminar un rato.',
     'Si acabas de caminar más de 1.000 pasos seguidos, espero un rato antes de pedirte otra pausa de movimiento.',
     'Si no haces la pausa, te lo recuerdo una vez más tarde.',
-    'Los tiempos se cambian en <b>Programar los cronómetros</b>. También puedes activar el cierre de jornada y los ojos de noche.',
+    'Los tiempos se cambian en <b>Programar los cronómetros</b>. El cierre de jornada y los ojos de noche se programan en el menú, en <b>Avisos</b>.',
     'Si tienes el PC conectado, los avisos salen por el ordenador.']],
   pasos: ['👣 Pasos en tu jornada', 'Cuenta tus pasos con el teléfono y te ayuda a moverte más.', [
     'Pulsa <b>Empezar a contar</b> y lleva el móvil encima (bolsillo o mano). Usa el acelerómetro y empieza a sumar tras 4 pasos seguidos.',
@@ -4584,6 +4686,8 @@ function bindSalud() {
   setInterval(musicRoute, 1500);
   setInterval(stepsSndTick, 2000);
   $('shareApp').addEventListener('click', shareApp);
+  $('mnPcLink').href = pcUrl(); $('mnPcLink').textContent = pcUrl().replace('https://', '');
+  $('mnPcSend').addEventListener('click', sharePc);
   document.addEventListener('click', e => { const b = e.target.closest('[data-how]'); if (b) howOpen(b.dataset.how); });
   $('stepsSnd').addEventListener('click', () => { stepsMuted = !stepsMuted; syncNative(); stepsSndTick(); });
   // Pausi
@@ -5127,17 +5231,6 @@ function homeOrderInit() {
   focusRender(); setInterval(() => { focusRender(); if (!REMOTE) focusTick(); }, 1000);
   // mesa elevadora y aviso de fin de jornada
   deskBind();
-  // pasar los bloques y tareas a Equilibra (portapapeles; si falla, cuadro de texto para copiar a mano)
-  $('eqCopy').addEventListener('click', async () => {
-    const json = JSON.stringify(db.bloques);
-    const manual = () => { const t = $('eqJson'); t.value = json; t.classList.remove('hidden'); t.focus(); t.select(); $('eqHint').textContent = 'Selecciona todo el texto, cópialo y pégalo en Amable Life → Ajustes → Bloques de Amable PC → «Traer el texto pegado».'; };
-    try {
-      if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('sin portapapeles');
-      await navigator.clipboard.writeText(json);
-      $('eqCopy').textContent = '✓ Copiado: ahora pégalo en Amable Life';
-      setTimeout(() => { $('eqCopy').textContent = '📋 Copiar mis bloques para Amable Life'; }, 4000);
-    } catch (e) { manual(); }
-  });
   $('confirmNo').addEventListener('click', () => { confirmYesFn = null; $('confirmModal').classList.add('hidden'); });
   $('confirmYes').addEventListener('click', () => { const f = confirmYesFn; confirmYesFn = null; $('confirmModal').classList.add('hidden'); if (f) f(); });
   $('infoOk').addEventListener('click', () => { $('infoModal').classList.add('hidden'); if (infoQueue.length) infoModal(...infoQueue.shift()); });
