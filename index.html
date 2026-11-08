@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.67</title>
+<title>Amable PC v2.68</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1572,7 +1572,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.67';
+const VERSION = 'v2.68';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -2950,14 +2950,17 @@ function scrSay(text, pause) {
   try {
     if (pause && scrYTReady && [YT.PlayerState.PLAYING, YT.PlayerState.BUFFERING].includes(scrYT.getPlayerState())) { paused = true; scrYT.pauseVideo(); }
   } catch (e) {}
+  // con el vídeo parado: un segundo de silencio, la voz, otro segundo de silencio y el vídeo vuelve
   const resume = () => {
     if (!paused) return; paused = false;
-    try { if (!scrBreakHold && !scrDeskHold && !scrQuietHold && !$('scrVideoBox').classList.contains('off')) scrYT.playVideo(); } catch (e) {}
-    setTimeout(scrCheckPlaying, 500);
+    setTimeout(() => {
+      try { if (!scrBreakHold && !scrDeskHold && !scrQuietHold && !$('scrVideoBox').classList.contains('off')) scrYT.playVideo(); } catch (e) {}
+      setTimeout(scrCheckPlaying, 500);
+    }, 1000);
   };
-  quietBypass = true;
-  try { speak(text, resume); } finally { quietBypass = false; }
-  setTimeout(resume, 2500 + text.length * 90); // por si la voz no avisa de que ha terminado
+  const talk = () => { quietBypass = true; try { speak(text, resume); } finally { quietBypass = false; } };
+  if (paused) setTimeout(talk, 1000); else talk();
+  setTimeout(resume, (paused ? 1000 : 0) + 2500 + text.length * 90); // por si la voz no avisa de que ha terminado
   if (paused) return; // con la música pausada no hace falta bajarle el volumen
   try {
     if (scrYTReady && !scrYT.isMuted()) {
@@ -3792,7 +3795,7 @@ function vistaAlert() {
   $('vAlert').classList.remove('hidden');
   chime();
   const pre = vAlertPrefix; vAlertPrefix = '';
-  vAlertSpeak = setTimeout(() => speak(pre + (move ? 'Pausa de movimiento.' : 'Pausa de vista.')), 1000);
+  vAlertSpeak = setTimeout(() => speak(pre + (move ? 'Pausa de movimiento.' : 'Pausa de vista.'), null, true), 1000);
   if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
   vistaNotify();
   sendState();
@@ -3802,7 +3805,7 @@ function vistaAlert() {
     if (!vAlerting || vBreakEnd) return;
     chime();
     clearTimeout(vAlertSpeak);
-    vAlertSpeak = setTimeout(() => speak('Tienes pendiente mirar a lo lejos.'), 1000);
+    vAlertSpeak = setTimeout(() => speak('Tienes pendiente mirar a lo lejos.', null, true), 1000);
     if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
     vistaNotify(true);
   }, db.vista.remind * 60000);
