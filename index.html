@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.74</title>
+<title>Amable PC v2.75</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -607,6 +607,15 @@
   .eq-note a:hover { text-decoration: underline; }
   .home-btn.correo .ico { background: rgba(167,139,250,0.14); }
   .home-btn.correo .st { color: #A78BFA; }
+  /* Botones del inicio: borde y fondo suave del color de cada uno */
+  #home .home-btn { --cr: 56,189,248; border: 2px solid rgba(var(--cr), 0.6); background: linear-gradient(135deg, rgba(var(--cr), 0.18), rgba(var(--cr), 0.05) 70%), #1E293B; box-shadow: 0 8px 24px rgba(2,6,23,0.35), inset 0 1px 0 rgba(var(--cr), 0.18); }
+  #home .home-btn.vista { --cr: 56,189,248; }
+  #home .home-btn.pasos { --cr: 74,222,128; }
+  #home .home-btn.focus { --cr: 251,113,133; }
+  #home .home-btn.correo { --cr: 167,139,250; }
+  #home .home-btn:hover, #home .home-btn.dragging { background: linear-gradient(135deg, rgba(var(--cr), 0.26), rgba(var(--cr), 0.08) 70%), #1E293B; border-color: rgba(var(--cr), 0.95); }
+  #home .home-btn.focus.on { background: linear-gradient(135deg, rgba(var(--cr), 0.3), rgba(var(--cr), 0.1) 70%), #1E293B; border-color: rgba(var(--cr), 1); }
+  #home .home-btn .ico { background: rgba(var(--cr), 0.2); box-shadow: inset 0 0 0 1px rgba(var(--cr), 0.35); }
   .home-btn.correo:hover { border-color: rgba(167,139,250,0.45); }
   .h-count { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px; }
   .h-count > div { text-align: center; font-size: 1.1rem; color: #cbd5e1; }
@@ -1602,7 +1611,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.74';
+const VERSION = 'v2.75';
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
