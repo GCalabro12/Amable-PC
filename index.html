@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.89</title>
+<title>Amable PC v2.90</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1705,7 +1705,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.89';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v2.90';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -3255,7 +3255,7 @@ const PIP_MAIN_NAME = 'amable-pc-main';
 const PIP_ICONS = {
   chrome: '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 24 4.95 13A22 22 0 0 1 43.05 13Z" fill="#EA4335"/><path d="M24 24 43.05 13A22 22 0 0 1 24 46Z" fill="#FBBC05"/><path d="M24 24 24 46A22 22 0 0 1 4.95 13Z" fill="#34A853"/><circle cx="24" cy="24" r="10.5" fill="#fff"/><circle cx="24" cy="24" r="8" fill="#4285F4"/></svg>',
   edge: '<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#0F7CC4"/><path d="M11 27c0-8 6-13 13-13 7 0 12 5 12 11 0 4-3 6-7 6H18c1 4 5 7 11 6" fill="none" stroke="#5EE3A8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  brave: '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3l9 3 6-2 5 8-3 15c-1 5-5 9-17 14C12 38 8 34 7 29L4 12l5-8 6 2z" fill="#FB542B"/><path d="M24 14l7 3-2 8-5 5-5-5-2-8z" fill="#fff"/></svg>'
+  brave: '<svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="pipBraveG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF5500"/><stop offset="1" stop-color="#F0391E"/></linearGradient></defs><path d="M13.5 3.5 24 7.5 34.5 3.5 44 13.5 40.5 23.5 36.5 33.5C34.5 39 29.5 42.5 24 45.5 18.5 42.5 13.5 39 11.5 33.5L7.5 23.5 4 13.5Z" fill="url(#pipBraveG)"/><path d="M24 12.5 32.5 15.5 30.5 24 27 29.5 24 27.5 21 29.5 17.5 24 15.5 15.5Z" fill="#fff"/><path d="M18.5 17.5 22.5 19.5 19.5 23ZM29.5 17.5 25.5 19.5 28.5 23Z" fill="#FB542B"/><path d="M20.5 32 24 30.5 27.5 32 24 35.5Z" fill="#fff"/></svg>'
 };
 async function pipBrowserKind() {
   try { if (navigator.brave && await navigator.brave.isBrave()) return 'brave'; } catch (e) {}
