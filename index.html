@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.81</title>
+<title>Amable PC v2.82</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -637,6 +637,17 @@
   #fDone { width: 100%; margin-top: 10px; }
   .f-now { text-align: center; font-size: 1.15rem; font-weight: 700; color: #F8FAFC; margin: 8px 0; line-height: 1.4; }
   .f-count { text-align: center; font-size: 2.4rem; font-weight: 800; color: #DC2626; font-variant-numeric: tabular-nums; }
+  .walk-sched { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+  .ws-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(148,163,184,0.10); border: 1px solid #334155; font-size: 15px; }
+  .ws-row .ws-t { flex: 1; color: #CBD5E1; }
+  .ws-row b { font-size: 18px; color: #F8FAFC; font-variant-numeric: tabular-nums; }
+  .ws-row .ws-s { min-width: 84px; text-align: right; font-size: 13px; font-weight: 700; color: #94A3B8; }
+  .ws-row.ok { background: rgba(74,222,128,0.12); border-color: rgba(74,222,128,0.5); }
+  .ws-row.ok .ws-s, .ws-row.ok b { color: #4ADE80; }
+  .ws-row.late { background: rgba(250,204,21,0.12); border-color: rgba(250,204,21,0.55); }
+  .ws-row.late .ws-s { color: #FACC15; }
+  .ws-row.next { border-color: rgba(56,189,248,0.6); }
+  .ws-row.next .ws-s { color: #7DD3FC; }
   .eq-note { display: block; margin-top: 14px; padding: 12px 14px; border-radius: 16px; border: 1px dashed rgba(74,222,128,0.5); background: rgba(74,222,128,0.07); color: #CBD5E1; font-size: 14px; line-height: 1.45; text-align: center; }
   .eq-note a { color: #4ADE80; font-weight: 700; text-decoration: none; }
   .eq-copy { display: block; width: auto; margin: 10px auto 6px; padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; background: rgba(74,222,128,0.15); border: 1px solid rgba(74,222,128,0.55); color: #BBF7D0; }
@@ -1167,6 +1178,11 @@
     </div>
   </div>
 
+  <div class="card" id="walkSchedCard">
+    <h2>🎯 Pasos que llevar a cada hora</h2>
+    <div class="walk-sched" id="walkSched"></div>
+  </div>
+
   <button id="toggleBtn"><svg class="ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Empezar a contar</button>
   <div class="status" id="status">Pulsa para empezar. Lleva el teléfono encima (bolsillo o mano).</div>
   <div class="help hidden" id="permHelp"></div>
@@ -1208,7 +1224,7 @@
 
   <div class="card">
     <label class="check" style="margin:0"><input type="checkbox" id="aWalkOn"> 🚶 Recordarme caminar si voy atrasado</label>
-    <div class="hint">A las 11:00 si no llevo la cuarta parte de mi meta · a las 13:00, la mitad · a las 16:00, tres cuartos · a las 18:00, la meta entera (con 8.000: 2.000, 4.000, 6.000 y 8.000)</div>
+    <div class="hint">Si a las horas de la tarjeta «Pasos que llevar a cada hora» voy por debajo, me lo dice en voz alta.</div>
   </div>
   <div class="card">
     <label class="check" style="margin:0"><input type="checkbox" id="aRestOn"> 🪑 Descansar al acabar cada bloque de pasos</label>
@@ -1650,7 +1666,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.81';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v2.82';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -2352,6 +2368,7 @@ function render() {
   $('blockTxt').textContent = fmt(b.done) + ' / ' + fmt(db.alerts.block);
   $('blockBar').style.width = (b.done / db.alerts.block * 100) + '%';
   $('dateTxt').textContent = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+  try { walkSchedRender(); } catch (e) {}
   renderChart();
   sendState();
 }
@@ -4206,6 +4223,16 @@ function battTick() {
 const WALK_CHECKS = [[660, 0.25], [780, 0.5], [960, 0.75], [1080, 1]];
 const walkGoalAt = f => Math.round((db.settings.goal || 8000) * f / 100) * 100;
 // Pasos que «tocaría» llevar ahora para ir al día (de 9:00 a 18:00, repartido)
+function walkSchedRender() {
+  const box = $('walkSched'); if (!box) return;
+  const steps = Math.round(today().steps), m = nowMin();
+  const next = WALK_CHECKS.findIndex(([t, f]) => steps < walkGoalAt(f));
+  box.innerHTML = WALK_CHECKS.map(([t, f], i) => {
+    const goal = walkGoalAt(f), ok = steps >= goal, late = !ok && m >= t;
+    const st = ok ? '✓ hecho' : late ? 'te faltan ' + fmt(goal - steps) : (i === next ? 'siguiente' : '');
+    return `<div class="ws-row${ok ? ' ok' : late ? ' late' : i === next ? ' next' : ''}"><span class="ws-t">Antes de las ${hm(t)}</span><b>${fmt(goal)}</b><span class="ws-s">${st}</span></div>`;
+  }).join('');
+}
 function walkExpected() { const m = nowMin(); return Math.round((db.settings.goal || 8000) * Math.min(1, Math.max(0, (m - 540) / 540))); }
 
 // ---------- Mesa elevadora: sentado / de pie (con mesa) o pausas para caminar (sin mesa) ----------
@@ -4247,6 +4274,7 @@ function deskMusic(mode) {
 function deskRender() {
   if (SCREEN || !$('deskAsk')) return;
   const D = desk();
+  try { walkSchedRender(); } catch (e) {}
   homeStepsRender();
   $('deskAsk').classList.toggle('hidden', D.has !== null);
   $('deskCard').classList.toggle('hidden', D.has !== true);
