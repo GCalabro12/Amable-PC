@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.80</title>
+<title>Amable PC v2.81</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1650,7 +1650,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.80';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v2.81';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -4005,7 +4005,7 @@ function vistaAlert() {
 // En cada tipo, las actividades rotan en orden y cada una tiene 3 variantes.
 const MICRO_ACTS = [
   ['🫁 Respiración', ['inspira en 4 tiempos, aguanta 4 y suelta el aire en 6.', 'respira hondo tres veces, llevando el aire a la tripa.', 'inspira por la nariz y suelta el aire despacio por la boca, tres veces.']],
-  ['👁 Ojos', ['parpadea despacio 10 veces.', 'mira lejos y luego cerca, alternando 5 veces.', 'frota las manos y cúbrete los ojos con las palmas unos segundos.']]
+  ['👁 Ojos', ['parpadea despacio 10 veces.', 'mira lejos y luego cerca, alternando 5 veces.']]
 ];
 const MOVE_ACTS = [
   ['🙆 Estiramiento', ['sube los brazos al techo y estira la espalda; luego inclina la cabeza hacia cada hombro.', 'entrelaza las manos detrás de la espalda y abre el pecho; gira el tronco a cada lado.', 'gira los hombros hacia atrás 10 veces y estira el cuello mirando arriba y abajo.']],
