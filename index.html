@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.82</title>
+<title>Amable PC v2.83</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1179,8 +1179,9 @@
   </div>
 
   <div class="card" id="walkSchedCard">
-    <h2>🎯 Pasos que llevar a cada hora</h2>
+    <label class="check" style="margin:0"><input type="checkbox" id="aWalkOn"> 🎯 Ver mis objetivos de pasos por hora y avisarme si voy atrasado</label>
     <div class="walk-sched" id="walkSched"></div>
+    <div class="hint" id="walkSchedHint">Si a esas horas voy por debajo, me lo dice en voz alta.</div>
   </div>
 
   <button id="toggleBtn"><svg class="ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Empezar a contar</button>
@@ -1222,10 +1223,6 @@
     <div class="yt-wrap collapsed" id="ytWrap"><div id="ytPlayer"></div></div>
   </div>
 
-  <div class="card">
-    <label class="check" style="margin:0"><input type="checkbox" id="aWalkOn"> 🚶 Recordarme caminar si voy atrasado</label>
-    <div class="hint">Si a las horas de la tarjeta «Pasos que llevar a cada hora» voy por debajo, me lo dice en voz alta.</div>
-  </div>
   <div class="card">
     <label class="check" style="margin:0"><input type="checkbox" id="aRestOn"> 🪑 Descansar al acabar cada bloque de pasos</label>
     <label for="aRestMin">Descanso (minutos)</label>
@@ -1666,7 +1663,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.82';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v2.83';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -2449,7 +2446,7 @@ function bindAlerts() {
   $('aSound').addEventListener('change', () => { A.sound = $('aSound').value; save(); unlockSound(); playSound(); });
   $('aBlockOn').addEventListener('change', () => { A.blockOn = $('aBlockOn').checked; save(); });
   $('aWalkOn').checked = A.walkOn;
-  $('aWalkOn').addEventListener('change', () => { A.walkOn = $('aWalkOn').checked; save(); unlockSound(); });
+  $('aWalkOn').addEventListener('change', () => { A.walkOn = $('aWalkOn').checked; save(); unlockSound(); walkSchedRender(); });
   $('aStillOn').checked = A.stillOn; $('aStillSec').value = A.stillSec; $('aStandNag').value = A.standNag;
   $('aStandNag').addEventListener('change', () => {
     const v = Math.round(Number($('aStandNag').value));
@@ -4225,6 +4222,9 @@ const walkGoalAt = f => Math.round((db.settings.goal || 8000) * f / 100) * 100;
 // Pasos que «tocaría» llevar ahora para ir al día (de 9:00 a 18:00, repartido)
 function walkSchedRender() {
   const box = $('walkSched'); if (!box) return;
+  const on = !!db.alerts.walkOn;
+  box.classList.toggle('hidden', !on); $('walkSchedHint').classList.toggle('hidden', !on);
+  if (!on) return;
   const steps = Math.round(today().steps), m = nowMin();
   const next = WALK_CHECKS.findIndex(([t, f]) => steps < walkGoalAt(f));
   box.innerHTML = WALK_CHECKS.map(([t, f], i) => {
