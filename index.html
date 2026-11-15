@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.83</title>
+<title>Amable PC v2.84</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -136,6 +136,18 @@
   .scr-bar { height: clamp(6px, 1.4vh, 14px); background: rgba(255,255,255,0.18); border-radius: 99px; overflow: hidden; margin-top: 1vh; }
   .scr-bar > div { height: 100%; width: 0; background: #4ade80; border-radius: 99px; transition: width 0.5s; }
   .scr-bar.yellow > div { background: #facc15; }
+  .scr-seg { margin-top: 0.4vh; }
+  .scr-pasos .scr-seg { margin-right: 46px; } /* deja libre el sitio de los botones de sonido y vídeo de la derecha */
+  .block-row .scr-seg { margin-top: 6px; }
+  .block-row .sg-hours, .block-row .sg-bar b { font-size: 12px; }
+  .block-row .sg-bar { height: 26px; }
+  .sg-hours { position: relative; height: 1.5em; font-size: clamp(9px, 3vw, 13px); color: #bae6fd; font-weight: 700; line-height: 1.5; }
+  .sg-hours span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+  .sg-hours span:last-child { transform: translateX(-100%); }
+  .sg-bar { position: relative; height: clamp(18px, 3.4vh, 28px); border-radius: 8px; background: rgba(255,255,255,0.18); overflow: hidden; }
+  .sg-bar .sg-fill { position: absolute; top: 0; bottom: 0; left: 0; width: 0; background: #facc15; transition: width 0.5s; }
+  .sg-bar i { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #0f172a; }
+  .sg-bar b { position: absolute; top: 0; bottom: 0; width: 25%; display: flex; align-items: center; justify-content: center; font-size: clamp(9px, 3vw, 13px); color: #f8fafc; text-shadow: 0 0 3px #000, 0 0 2px #000; font-variant-numeric: tabular-nums; }
   .scr-stats { display: flex; justify-content: flex-end; gap: 3.5vw; margin-top: 2vh; font-size: clamp(11px, min(2vw, 3vh), 26px); color: #cbd5e1; }
   .scr-stats b { display: block; font-size: clamp(18px, min(4.5vw, 7vh), 58px); color: #fff; font-variant-numeric: tabular-nums; }
   .scr-block { margin-top: 2vh; font-size: clamp(12px, min(2.6vw, 4vh), 30px); color: #facc15; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -528,6 +540,8 @@
   html.claro { filter: invert(1) hue-rotate(180deg); background: #09182c linear-gradient(180deg, #2c65af 0%, #133055 55%, #09182c 100%) fixed; min-height: 100%; }
   html.claro body { background: transparent; }
   /* Modo claro: el logotipo lleva el interior de la pantalla blanco y un perfil blanco por fuera (el azul del logo se confundía con el fondo azul) */
+  /* la línea de pasos del día: amarillo (en modo claro el filtro lo deja ámbar, el amarillo puro no se puede) */
+  html.claro .sg-fill { background: #994c00; }
   html.claro .lg-w { opacity: 1; }
   html.claro .lg-c { fill: #fff; }
   /* Versión en negro (el fondo azul de arriba es oscuro y no se leía; se escribe «al revés» por el filtro) */
@@ -1174,7 +1188,13 @@
     </div>
     <div class="block-row">
       <div class="lbl"><span id="blockNum">Bloque 1</span><span id="blockTxt">0 / 2000</span></div>
-      <div class="mini-bar"><div id="blockBar"></div></div>
+      <div class="scr-seg">
+        <div class="sg-hours"><span style="left:25%">11 h</span><span style="left:50%">13 h</span><span style="left:75%">16 h</span><span style="left:100%">18 h</span></div>
+        <div class="sg-bar"><div class="sg-fill" id="blockBar"></div>
+          <b style="left:0" id="pSg1">2.000</b><b style="left:25%" id="pSg2">4.000</b><b style="left:50%" id="pSg3">6.000</b><b style="left:75%" id="pSg4">8.000</b>
+          <i style="left:25%"></i><i style="left:50%"></i><i style="left:75%"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1585,7 +1605,15 @@
       <div class="scr-stepsrow"><div class="scr-steps" id="sSteps">0</div><div class="scr-label">pasos <span id="sGoal">de 8000</span></div></div>
       <div class="desk-toggle scr-desk hidden" id="sDesk"></div>
       <div class="scr-bar"><div id="sGoalBar"></div></div>
-      <div class="scr-block"><span id="sBlockTxt">Bloque 1 · 0 / 2000</span><div class="scr-bar yellow"><div id="sBlockBar"></div></div></div>
+      <div class="scr-block"><span id="sBlockTxt">Bloque 1 · 0 / 2000</span>
+        <div class="scr-seg">
+          <div class="sg-hours"><span style="left:25%">11 h</span><span style="left:50%">13 h</span><span style="left:75%">16 h</span><span style="left:100%">18 h</span></div>
+          <div class="sg-bar"><div class="sg-fill" id="sBlockBar"></div>
+            <b style="left:0" id="sSg1">2.000</b><b style="left:25%" id="sSg2">4.000</b><b style="left:50%" id="sSg3">6.000</b><b style="left:75%" id="sSg4">8.000</b>
+            <i style="left:25%"></i><i style="left:50%"></i><i style="left:75%"></i>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="scr-stats" data-box="datos">
       <button class="scr-fold" data-fold="datos" aria-label="Plegar o desplegar">▴</button>
@@ -1663,7 +1691,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.83';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v2.84';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -2363,7 +2391,11 @@ function render() {
   const b = blockInfo(d.steps, db.alerts.block);
   $('blockNum').textContent = 'Bloque ' + b.num;
   $('blockTxt').textContent = fmt(b.done) + ' / ' + fmt(db.alerts.block);
-  $('blockBar').style.width = (b.done / db.alerts.block * 100) + '%';
+  { // la línea amarilla es el día entero partido en 4 (11, 13, 16 y 18 h)
+    const g = s.goal || 8000;
+    $('blockBar').style.width = Math.min(100, d.steps / g * 100) + '%';
+    [0.25, 0.5, 0.75, 1].forEach((f, i) => { const el = $('pSg' + (i + 1)); if (el) el.textContent = fmt(Math.round(g * f / 100) * 100); });
+  }
   $('dateTxt').textContent = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
   try { walkSchedRender(); } catch (e) {}
   renderChart();
@@ -3147,7 +3179,11 @@ function scrData(m) {
     }
     const b = blockInfo(m.steps, m.block);
     $('sBlockTxt').textContent = `Bloque ${b.num} · ${fmt(b.done)} / ${fmt(m.block)}`;
-    $('sBlockBar').style.width = (b.done / m.block * 100) + '%';
+    { // la línea amarilla es el día entero partido en 4 (11, 13, 16 y 18 h): 2.000 · 4.000 · 6.000 · 8.000 con la meta de 8.000
+      const g = m.goal || 8000;
+      $('sBlockBar').style.width = Math.min(100, m.steps / g * 100) + '%';
+      [0.25, 0.5, 0.75, 1].forEach((f, i) => { const el = $('sSg' + (i + 1)); if (el) el.textContent = fmt(Math.round(g * f / 100) * 100); });
+    }
     scrMusicVoice(m);
     if (m.video && m.video !== scrVideoId) {
       scrVideoId = m.video;
