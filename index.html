@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.88</title>
+<title>Amable PC v2.89</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1705,7 +1705,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.88';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v2.89';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -3250,6 +3250,37 @@ function scrCheckPlaying() {
   $('sVid2').classList.toggle('needplay', need);
   $('sVid2').title = need ? 'Iniciar vídeo' : 'Vídeo de fondo';
 }
+// Ventana flotante: botón con el icono del navegador (Brave, Edge o Chrome) arriba a la derecha; lleva a la ventana principal de Amable PC
+const PIP_MAIN_NAME = 'amable-pc-main';
+const PIP_ICONS = {
+  chrome: '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 24 4.95 13A22 22 0 0 1 43.05 13Z" fill="#EA4335"/><path d="M24 24 43.05 13A22 22 0 0 1 24 46Z" fill="#FBBC05"/><path d="M24 24 24 46A22 22 0 0 1 4.95 13Z" fill="#34A853"/><circle cx="24" cy="24" r="10.5" fill="#fff"/><circle cx="24" cy="24" r="8" fill="#4285F4"/></svg>',
+  edge: '<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#0F7CC4"/><path d="M11 27c0-8 6-13 13-13 7 0 12 5 12 11 0 4-3 6-7 6H18c1 4 5 7 11 6" fill="none" stroke="#5EE3A8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  brave: '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3l9 3 6-2 5 8-3 15c-1 5-5 9-17 14C12 38 8 34 7 29L4 12l5-8 6 2z" fill="#FB542B"/><path d="M24 14l7 3-2 8-5 5-5-5-2-8z" fill="#fff"/></svg>'
+};
+async function pipBrowserKind() {
+  try { if (navigator.brave && await navigator.brave.isBrave()) return 'brave'; } catch (e) {}
+  return /Edg\//.test(navigator.userAgent) ? 'edge' : 'chrome';
+}
+// Trae la ventana principal al frente (la pestaña que abrió la ventana flotante)
+function pipVolver(w) {
+  try { window.focus(); } catch (e) {}
+  let m = null;
+  try { m = w.open('', PIP_MAIN_NAME); } catch (e) {}
+  if (m && m !== window) {
+    let blank = false;
+    try { blank = m.location.href === 'about:blank'; } catch (e) {}
+    try { blank ? m.close() : m.focus(); } catch (e) {}
+  }
+  // Si el navegador no deja traer la pestaña al frente, se avisa en la propia ventana flotante
+  setTimeout(() => {
+    if (document.visibilityState === 'visible' && document.hasFocus()) return;
+    const t = $('sToast'); if (!t) return;
+    clearTimeout(toastT);
+    t.textContent = 'Toca la pestaña de Amable PC en tu navegador para ir a la ventana principal.';
+    t.classList.remove('hidden');
+    toastT = setTimeout(() => t.classList.add('hidden'), 6000);
+  }, 700);
+}
 async function openPip() {
   if (window.__pip) { window.__pip.close(); return; }
   let w;
@@ -3273,6 +3304,15 @@ async function openPip() {
   // la ventana flotante no tiene dirección propia: el logotipo (icon-192.png) se rompía; se le da la dirección completa
   panel.querySelectorAll('img').forEach(im => { const u = im.src; if (u) im.src = u; });
   box.append(panel, toast, cele);
+  { // botón con el icono del navegador, arriba a la derecha: vuelve a la ventana principal
+    const back = w.document.createElement('button');
+    back.id = 'pipBack'; back.type = 'button';
+    back.title = 'Abrir la ventana principal de Amable PC'; back.setAttribute('aria-label', back.title);
+    back.style.cssText = 'position:absolute;top:6px;right:6px;z-index:9;width:30px;height:30px;min-width:30px;margin:0;padding:4px;border-radius:9px;background:rgba(15,23,42,0.85);border:1px solid #475569;cursor:pointer;display:flex;align-items:center;justify-content:center;';
+    back.addEventListener('click', () => pipVolver(w));
+    pipBrowserKind().then(k => { back.innerHTML = PIP_ICONS[k] || PIP_ICONS.chrome; back.firstChild.style.cssText = 'width:100%;height:100%;display:block;'; });
+    box.append(back);
+  }
   // la ventana principal queda oculta y el navegador frena sus relojes: la cuenta atrás la lleva la ventana flotante
   w.setInterval(() => { try { scrEyeTick(); } catch (e) {} }, 500);
   w.document.body.appendChild(box);
@@ -3288,6 +3328,7 @@ async function openPip() {
 }
 function initScreen() {
   document.body.classList.add('screen');
+  window.name = PIP_MAIN_NAME; // para que la ventana flotante pueda traer esta pestaña al frente
   $('app').classList.add('hidden');
   $('screen').classList.remove('hidden');
   document.title = 'Amable PC · pantalla del PC';
