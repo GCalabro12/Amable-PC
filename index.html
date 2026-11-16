@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.96</title>
+<title>Amable PC v2.97</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -228,7 +228,11 @@
   .pip .eye-oval { transform: scale(1.25); transform-origin: 170px 110px; stroke-width: 10px; }
   /* ventana flotante: los 6 puntos para mover cada recuadro van a la derecha (el de la vista, a la derecha de la batería) */
   .pip .scr-pasos > .scr-grip, .pip .scr-stats > .scr-grip { left: auto; right: 3px; }
-  .pip .scr-eye > .scr-grip { left: calc(100% + clamp(8px, 4vw, 26px) + 34px); bottom: auto; top: 50%; transform: translateY(-50%); }
+  .pip .scr-eye > .scr-grip { left: calc(100% + clamp(8px, 4vw, 26px) + 34px); bottom: auto; top: calc(50% + 1px); transform: none; }
+  /* el botón de plegar del ojo va encima de los 6 puntos, a la derecha de la batería, sin pasar de su borde de arriba */
+  .pip .scr-eye > .scr-fold { left: calc(100% + clamp(8px, 4vw, 26px) + 28px); right: auto; top: calc(50% - 23px); }
+  /* botones de la pausa: esquinas menos redondas, y el triángulo de «Empezar pausa» va a la derecha del texto (menos alto) */
+  .pip .scr-eye .scr-eye-act .scr-btn { border-radius: 8px; }
   .pip .scr-eye .scr-eye-lbl { position: absolute; left: 0; right: 0; top: 81%; margin: 0; text-align: center; }
   .pip .scr-eye.alert #sEyeRingE { stroke: #facc15; }
   body:not(.pip) .eye-oval { display: none; }
@@ -1689,7 +1693,7 @@
         <div class="scr-eye-lbl" id="sEyeLbl">pausa de vista</div>
       </div>
       <div class="scr-act scr-eye-act">
-        <button class="scr-btn sky hidden" data-cmd="vistaStart" id="sEyeStart">▶ Empezar pausa</button>
+        <button class="scr-btn sky hidden" data-cmd="vistaStart" id="sEyeStart">Empezar pausa ▶</button>
         <button class="scr-btn hidden" data-cmd="vistaSnooze" id="sEyeSnooze">Posponer</button>
         <button class="scr-btn hidden" data-cmd="vistaEnd" id="sEyeEnd">■ Terminar</button>
         <button class="scr-btn ghost hidden" data-cmd="vistaStart" id="sEyeNow">Pausa ahora</button>
@@ -1721,7 +1725,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.96';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v2.97';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
