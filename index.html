@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.92</title>
+<title>Amable PC v2.93</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -137,7 +137,8 @@
   .scr-bar > div { height: 100%; width: 0; background: #4ade80; border-radius: 99px; transition: width 0.5s; }
   .scr-bar.yellow > div { background: #facc15; }
   .scr-seg { margin-top: 0.4vh; }
-  .scr-pasos .scr-seg { margin: 4px 36px 0 0; } /* arriba del recuadro de pasos; deja libre el botón de plegar de la derecha */
+  .scr-pasos .scr-seg { order: 10; margin: 0.4vh 46px 0 0; } /* pantalla normal del PC: abajo; deja libre el sitio de los botones de la derecha */
+  .pip .scr-pasos .scr-seg { order: -1; margin: 4px 36px 0 0; } /* ventana flotante: arriba del recuadro de pasos; deja libre el botón de plegar */
   .scr-pasos.folded .scr-seg { display: none; }
   .block-row .scr-seg { margin-top: 6px; }
   .block-row .sg-hours, .block-row .sg-bar b { font-size: 12px; }
@@ -221,6 +222,8 @@
   .scr-eye.alert .eye-center { animation: eyeFade 1.2s infinite; }
   .scr-eye .eye-center { bottom: auto; aspect-ratio: 340 / 220; pointer-events: none; }
   .scr-eye .scr-act { position: relative; z-index: 2; }
+  .pip .eye-circ { display: none; }
+  body:not(.pip) .eye-oval { display: none; }
   .scr-toast, .scr-cele { pointer-events: none; }
   /* Sonido y vídeo a los lados de los pasos */
   .scr-side { display: none; }
@@ -251,7 +254,8 @@
   .scr-eye-batt.charging b { color: #4ade80; }
   @keyframes chargeGlow { 50% { box-shadow: 0 0 12px 3px rgba(74,222,128,0.55); } }
   .scr-pasos .scr-side { display: flex; position: absolute; top: 50%; transform: translateY(-50%); flex-direction: column; align-items: center; gap: 6px; z-index: 2; }
-  .scr-pasos .scr-side.left { left: 12px; top: 62px; bottom: 30px; transform: none; }
+  .scr-pasos .scr-side.left { left: 12px; top: 12px; bottom: 30px; transform: none; }
+  .pip .scr-pasos .scr-side.left { top: 62px; }
   .scr-pasos .scr-side.right { right: 10px; top: calc(50% + 6px); }
   .scr-pasos.folded .scr-side { display: none; }
   .scr-ico { width: 34px; height: 34px; min-width: 34px; padding: 6px; border-radius: 10px; background: rgba(15,23,42,0.75); border: 1px solid #475569; color: #e2e8f0; display: flex; align-items: center; justify-content: center; }
@@ -1663,9 +1667,11 @@
       <svg viewBox="0 0 340 220" aria-hidden="true">
         <defs><radialGradient id="eyeWhiteS" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#1e293b"/><stop offset="1" stop-color="#0b1220"/></radialGradient></defs>
         <path id="sEyeLid" d="M14 110 C90 -30 250 -30 326 110 C250 250 90 250 14 110 Z" fill="url(#eyeWhiteS)" fill-opacity="0.85" stroke="#38bdf8" stroke-width="6" stroke-linejoin="round"/>
-        <circle cx="170" cy="110" r="78" fill="#0f172a" stroke="#334155" stroke-width="12"/>
+        <circle class="eye-circ" cx="170" cy="110" r="78" fill="#0f172a" stroke="#334155" stroke-width="12"/>
+        <path class="eye-oval" d="M170 59 C202 59 234 76 248 110 C220 178 120 178 92 110 C106 76 138 59 170 59Z" fill="#0f172a" stroke="#334155" stroke-width="12" stroke-linejoin="round"/>
         <g class="run-ico" transform="translate(170 58)" fill="none" stroke="#4ADE80" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="-15" r="7" fill="#4ADE80" stroke="none"/><path d="M3 -6 L-3 13"/><path d="M3 -3 L16 5 L23 -1"/><path d="M3 -3 L-9 1 L-14 11"/><path d="M-3 13 L9 23 L5 34"/><path d="M-3 13 L-14 25 L-25 23"/></g>
-        <circle id="sEyeRing" cx="170" cy="110" r="78" fill="none" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" transform="rotate(-90 170 110)"/>
+        <circle class="eye-circ" id="sEyeRing" cx="170" cy="110" r="78" fill="none" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" transform="rotate(-90 170 110)"/>
+        <path class="eye-oval" id="sEyeRingE" pathLength="100" d="M170 59 C202 59 234 76 248 110 C220 178 120 178 92 110 C106 76 138 59 170 59Z" fill="none" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       <div class="scr-eye-batt hidden" id="sEyeBatt"><span class="batt-v"><span id="sEyeBattFill"></span></span><b id="sEyeBattPct">--</b></div>
       <div class="eye-center">
@@ -1705,7 +1711,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.92';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v2.93';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -3054,7 +3060,7 @@ function scrEyeTick() {
     time = '¡Ya!'; lbl = v.move ? 'toca pausa de movimiento' : 'toca pausa de vista'; frac = 0;
   } else {
     const left = Math.max(0, v.left - since);
-    time = mmss(left); lbl = v.nextMove ? 'próxima pausa de movimiento' : 'próxima pausa de vista'; frac = left / (v.every * 60000);
+    time = mmss(left); lbl = (window.__pip ? '' : 'próxima ') + (v.nextMove ? 'pausa de movimiento' : 'pausa de vista'); frac = left / (v.every * 60000);
   }
   $('sEye').classList.toggle('move', !!(v.breakLeft > 0 ? v.move : v.alerting ? v.move : v.nextMove));
   $('sEye').classList.toggle('alert', !!v.alerting && !(v.breakLeft > 0));
@@ -3067,6 +3073,8 @@ function scrEyeTick() {
   $('sEyeLbl').textContent = lbl;
   $('sEyeRing').style.strokeDasharray = C;
   $('sEyeRing').style.strokeDashoffset = C * (1 - Math.min(1, frac));
+  const ringE = $('sEyeRingE'); // el mismo avance, siguiendo el contorno del ojo (ventana flotante)
+  if (ringE) { ringE.style.strokeDasharray = '100'; ringE.style.strokeDashoffset = String(100 * (1 - Math.min(1, frac))); }
 }
 const BATT_LOW = 20;
 let scrBattWarned = false, phoneBattWarned = false;
