@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.99</title>
+<title>Amable PC v3.01</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -586,6 +586,9 @@
   #profileModal input { width: 100%; box-sizing: border-box; padding: 10px; border-radius: 10px; border: 1px solid #334155; background: #0F172A; color: #fff; font-size: 16px; margin-top: 3px; }
   #profileModal input[type="checkbox"] { width: 18px; height: 18px; padding: 0; margin: 0; flex: none; accent-color: #4ade80; }
   #pfMsg { min-height: 1.2em; margin-top: 8px; font-size: 14px; font-weight: 700; }
+  .mn-ver { margin: 16px 4px 4px; text-align: center; font-size: 15px; font-weight: 700; line-height: 1.6; color: #94A3B8; font-variant-numeric: tabular-nums; }
+  .mn-ver b { color: #F8FAFC; }
+  .mn-ver .nuevo { color: #FACC15; }
   /* Menú un 20 % más grande: letras e iconos de la izquierda (los iconos miden 1.15em, crecen con la letra) */
   #profileModal .mn-title { font-size: 25px; }
   #profileModal .mn-x { font-size: 26px; }
@@ -1538,6 +1541,7 @@
       <a class="mn-link" href="privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>
     </div>
   </details>
+  <div class="mn-ver" id="mnVer"></div>
 </div>
 <div class="cele hidden" id="pactModal">
   <div class="cele-box pact-box" id="pactBox">
@@ -1725,7 +1729,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.99';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v3.01';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -2070,7 +2074,7 @@ function nativeStatus() {
 }
 // Aviso de app Android nueva (como en Amable Fit): al abrir la app, si la instalada es más vieja que la última publicada, ofrece descargarla.
 // Súbelo cada vez que se publique un APK con cambios nativos (junto con el archivo VERSION del repo del APK).
-const APK_ULTIMA = '2.67';
+const APK_ULTIMA = '2.68';
 const verMenor = (a, b) => { const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number); for (let i = 0; i < Math.max(x.length, y.length); i++) { const p = x[i] || 0, q = y[i] || 0; if (p !== q) return p < q; } return false; };
 function apkAviso() {
   let v = '';
@@ -2769,7 +2773,7 @@ function castCommand(m) {
   if (!m || m.t !== 'cmd') return;
   const S = db.salud;
   switch (m.c) {
-    case 'update': checkUpdate(); return;
+    case 'update': checkUpdate(true); return;
     case 'getdb': remoteWanted = true; castSend({ t: 'db', db: { ...db, cast: null } }); return;
     case 'remoteoff': remoteWanted = false; return;
     case 'patch': applyRemotePatch(m.key, m.val); return;
@@ -3175,7 +3179,7 @@ function scrData(m) {
     if (scrCodeNow) scrConn('Conexión: ' + scrCodeNow + ' · ' + (m.ver || 'versión antigua ⚠️'));
     if (m.ver && m.ver !== VERSION && scrLink && scrLink.open && Date.now() - scrUpdAsked > 60000) {
       scrUpdAsked = Date.now(); scrLink.send({ t: 'cmd', c: 'update' });
-      checkUpdate();
+      checkUpdate(true);
       clearTimeout(toastT);
       $('sToast').textContent = `📱 El móvil tiene la ${m.ver} y el PC la ${VERSION}. Abre la app en el móvil para que se actualice.`;
       $('sToast').classList.remove('hidden');
@@ -3361,7 +3365,7 @@ async function openPip() {
   iconWatch(w.document);
   $('sPip').textContent = $('sPairPip').textContent = '🗗 Cerrar ventana flotante';
   w.addEventListener('pagehide', () => {
-    if (pipUpdPending) setTimeout(checkUpdate, 300);
+    if (pipUpdPending) setTimeout(() => checkUpdate(true), 300);
     home.insertBefore(panel, next);
     home.append(toast, cele);
     window.__pip = null;
@@ -3727,6 +3731,19 @@ function helpLinks() {
   let apk = '';
   try { if (NATIVE) apk = ' · APK ' + AndroidPasos.version(); } catch (e) {}
   const ver = VERSION + apk;
+  { // en el menú: la versión de la web y la de la APK
+    const mv = $('mnVer');
+    if (mv) {
+      let h = `Web <b>${VERSION}</b>`;
+      try {
+        if (NATIVE) {
+          const a = AndroidPasos.version();
+          h += ` · APK <b>${a}</b>` + (/^\d+(\.\d+)*$/.test(a) && verMenor(a, APK_ULTIMA) ? `<br><span class="nuevo">Hay una APK nueva (${APK_ULTIMA})</span>` : ' · al día');
+        } else h += '<br>(en el navegador no hay APK)';
+      } catch (e) {}
+      mv.innerHTML = h;
+    }
+  }
   mail.href = 'mailto:info@practicaintegral.club?subject=' + encodeURIComponent('Amable PC · Ayuda')
     + '&body=' + encodeURIComponent('Hola, os escribo por Amable PC. Me pasa esto: \n\n\n--\nVersión: ' + ver);
   wa.href = 'https://wa.me/34658825799?text=' + encodeURIComponent('Hola, os escribo por Amable PC (' + ver + '). Me pasa esto: ');
@@ -5420,11 +5437,23 @@ function initShell() {
 
 // ---------- Comprobar si hay versión nueva (el móvil a veces enseña la anterior guardada) ----------
 let pipUpdPending = '';
-async function checkUpdate() {
+let ultMira = 0;
+async function checkUpdate(force) {
   if (REMOTE) return;
+  if (!force && Date.now() - ultMira < 60000) return; // como mucho una vez por minuto
+  if (!force && vBreakEnd) return; // en mitad de una pausa no se recarga
+  ultMira = Date.now();
   try {
-    const r = await fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' });
-    const m = (await r.text()).match(/const VERSION = '([^']+)'/);
+    try { navigator.serviceWorker && navigator.serviceWorker.getRegistration().then(g => g && g.update()).catch(() => {}); } catch (e) {}
+    // primero version.txt (unos 6 bytes); si no está, la página entera
+    let nueva = null;
+    try { const r0 = await fetch('version.txt?nc=' + Date.now(), { cache: 'no-store' }); if (r0.ok) nueva = ((await r0.text()).trim().match(/^v[\d.]+$/) || [])[0] || null; } catch (e) {}
+    if (!nueva) {
+      const r = await fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' });
+      const m0 = (await r.text()).match(/const VERSION = '([^']+)'/);
+      nueva = m0 ? m0[1] : null;
+    }
+    const m = nueva ? [null, nueva] : null;
     if (!m || m[1] === VERSION) return;
     if (window.__pip) { // con la ventana flotante abierta no se recarga: se hace al cerrarla
       pipUpdPending = m[1];
@@ -5435,7 +5464,10 @@ async function checkUpdate() {
     try { if (sessionStorage.getItem(k)) return; sessionStorage.setItem(k, '1'); } catch (e) {}
     const u = new URL(location.href);
     u.searchParams.set('v', m[1]);
-    location.replace(u.toString());
+    const ind = $('pullInd');
+    if (ind) { ind.textContent = '🔄 Actualizando a la ' + m[1] + '…'; ind.classList.remove('drag'); ind.classList.add('ready'); ind.style.transform = 'translate(-50%, 14px)'; }
+    try { save(); } catch (e) {}
+    setTimeout(() => location.replace(u.toString()), ind ? 900 : 0);
   } catch (e) {}
 }
 setTimeout(checkUpdate, 1500);
