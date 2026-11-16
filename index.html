@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.95</title>
+<title>Amable PC v2.96</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -416,6 +416,7 @@
   .splash .logo { position: relative; width: 144px; height: 144px; animation: pcbm-logo-in 1000ms var(--ease-pop) both; }
   .splash-name { position: relative; font-size: 2rem; font-weight: 800; letter-spacing: -0.4px; margin-top: 24px; animation: pcbm-text-in 500ms var(--ease-out) 1000ms both, pcbm-text-out 400ms var(--ease-in) 1700ms forwards; }
   .splash-name b, .home-title b { color: #FACC15; }
+  .splash-ver { position: absolute; left: 0; right: 0; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); text-align: center; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.3px; color: #94A3B8; font-variant-numeric: tabular-nums; animation: pcbm-text-in 500ms var(--ease-out) 1000ms both, pcbm-text-out 400ms var(--ease-in) 1700ms forwards; }
   /* Sellos (copiado de Grow Panel/SELLO.md): dos botones, «by Práctica Integral» y «with Grow Panel» */
   .sellos{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
   .pi-seal,.gp-seal{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.3px;
@@ -919,6 +920,7 @@
   <div class="splash-glow"></div>
   <div class="logo" id="splashLogo" data-logo></div>
   <div class="splash-name"><b>Amable</b> PC</div>
+  <div class="splash-ver" id="splashVer"></div>
   <div class="sellos">
     <a class="pi-seal" href="https://practicaintegral.club" target="_blank" rel="noopener">by Práctica Integral</a>
     <a class="gp-seal" href="https://practicaintegral.club/grow-panel/" target="_blank" rel="noopener"><svg viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="107.5" r="69.1" fill="#f59e0b"/><circle cx="397.2" cy="210.1" r="69.1" fill="#0f766e"/><circle cx="343.3" cy="376.1" r="69.1" fill="#8b5cf6"/><circle cx="168.7" cy="376.1" r="69.1" fill="#3b82f6"/><circle cx="114.8" cy="210.1" r="69.1" fill="#ef4444"/><circle cx="256" cy="256" r="79.4" fill="#6b7280"/></svg>with Grow Panel</a>
@@ -1719,7 +1721,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.95';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v2.96';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -5358,6 +5360,7 @@ function initShell() {
   // cada copia del logo con su propio degradado (si no, al ocultar la bienvenida el del inicio se queda sin color)
   document.querySelectorAll('[data-logo]').forEach((el, i) => { el.innerHTML = LOGO_SVG.replace(/lgPcbm/g, 'lgPcbm' + i); });
   $('verBadge').textContent = VERSION;
+  $('splashVer').textContent = VERSION; // abajo del todo en la bienvenida
   $('verBadge').classList.remove('hidden');
   document.body.classList.add('has-badge');
   document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => {
