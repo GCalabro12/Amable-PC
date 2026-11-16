@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v3.01</title>
+<title>Amable PC v3.02</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1268,7 +1268,7 @@
   <div class="card">
     <details>
     <summary>🔔 Voz y celebración de bloques</summary>
-    <label class="check"><input type="checkbox" id="aVoice"> Sonido + voz: «llevas … pasos de este bloque» y, en el último 30 %, «te faltan … para terminar»</label>
+    <label class="check"><input type="checkbox" id="aVoice"> Sonido + voz: «llevas … pasos» y, a 500 pasos de acabar el bloque, «te faltan 500 para terminar»</label>
     <div class="row">
       <div>
         <label for="aEvery">Cada</label>
@@ -1729,7 +1729,7 @@
 </div>
 
 <script>
-const VERSION = 'v3.01';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v3.02';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -2074,7 +2074,7 @@ function nativeStatus() {
 }
 // Aviso de app Android nueva (como en Amable Fit): al abrir la app, si la instalada es más vieja que la última publicada, ofrece descargarla.
 // Súbelo cada vez que se publique un APK con cambios nativos (junto con el archivo VERSION del repo del APK).
-const APK_ULTIMA = '2.68';
+const APK_ULTIMA = '2.69';
 const verMenor = (a, b) => { const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number); for (let i = 0; i < Math.max(x.length, y.length); i++) { const p = x[i] || 0, q = y[i] || 0; if (p !== q) return p < q; } return false; };
 function apkAviso() {
   let v = '';
@@ -2230,12 +2230,12 @@ function unlockSound() {
 }
 
 // silent: la app Android ya ha dado el aviso con sonido y voz; aquí solo se muestra
-// Frase del aviso de pasos: «llevas 500, 1.000, 1.500…» (total del día) y, en el último 30 % del bloque, «te faltan X para terminar el bloque».
+// Frase del aviso de pasos: «llevas 500, 1.000, 1.500…» (total del día) y, cuando faltan 500 o menos para acabar el bloque, «te faltan X para terminar el bloque». Nunca se dice cuánto falta para la meta del día.
 // (La app Android dice lo mismo, ver StepService.announce)
 function blockSay(n) {
   const b = db.alerts.block || 2000, w = n % b;
   if (!w) return `Llevas ${fmt(n)} pasos.`;
-  return w / b < 0.7 ? `Llevas ${fmt(n)} pasos.` : `Te faltan ${fmt(b - w)} pasos para terminar el bloque.`;
+  return b - w > 500 ? `Llevas ${fmt(n)} pasos.` : `Te faltan ${fmt(b - w)} pasos para terminar el bloque.`;
 }
 function announce(n, goalHit, silent) {
   let text = n % db.alerts.every === 0 ? blockSay(n) : '';
@@ -4211,7 +4211,7 @@ function vistaBreak() {
   if (move && desk().has === false) {
     const behind = walkExpected() - Math.round(today().steps), canDo = V.moveDur * 100;
     act = { title: '🚶 Caminar', text: behind > 0
-      ? `camina unos ${fmt(Math.min(behind, canDo))} pasos: vas ${fmt(behind)} por detrás de tu meta de ${fmt(db.settings.goal || 8000)}.`
+      ? `camina unos ${fmt(Math.min(behind, canDo))} pasos para ir al día.`
       : 'camina un poco para mantener el ritmo: vas al día con tu meta de pasos.' };
   }
   const dk = dayKey();
@@ -4855,9 +4855,9 @@ function stillTick() {
     const every = A.standNag * 60000;
     if (now - Math.max(stillMoveAt, standNagAt, stillModeAt) >= every && !isQuiet() && !vBreakEnd && !vAlerting && inHours()) {
       standNagAt = now;
-      const si = deskStandInfo(steps), goalLeft = Math.max(0, (db.settings.goal || 8000) - steps);
+      const si = deskStandInfo(steps);
       if (si.left <= 0) { stillRun = 0; return; }
-      const text = `Sigues de pie y no avanzas. Camina: llevas ${fmt(si.done)} pasos de este bloque, te faltan ${fmt(si.left)} para terminarlo y sentarte.` + (goalLeft > 0 ? ` Para tu meta del día te faltan ${fmt(goalLeft)}.` : ' Ya has cumplido tu meta del día.');
+      const text = `Sigues de pie y no avanzas. Camina: llevas ${fmt(si.done)} pasos de este bloque.` + (si.left <= 500 ? ` Te faltan ${fmt(si.left)} para terminar el bloque.` : '');
       speak(text, null, true);
       castSend({ t: 'toast', text: '🚶 ' + text });
     }
@@ -4922,7 +4922,7 @@ function walkTick() {
   A.walkDone.n = idx + 1; save(); // solo el último punto pasado; los anteriores ya no tocan
   const [t, f] = WALK_CHECKS[idx], goal = walkGoalAt(f), steps = Math.round(today().steps);
   if (m - t > 60 || steps >= goal) return; // si abres la app mucho más tarde, o ya llegaste, no avisa
-  const text = `Son las ${hm(t)} y llevas ${fmt(steps)} pasos. Te faltan ${fmt(goal - steps)} para los ${fmt(goal)}. Es buen momento para empezar a caminar.`;
+  const text = `Son las ${hm(t)} y llevas ${fmt(steps)} pasos. Es buen momento para empezar a caminar.`;
   chime();
   setTimeout(() => speak(text), 900);
   castSend({ t: 'toast', text: '🚶 ' + text });
