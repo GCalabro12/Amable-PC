@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v2.98</title>
+<title>Amable PC v2.99</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1725,7 +1725,7 @@
 </div>
 
 <script>
-const VERSION = 'v2.98';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v2.99';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -2135,9 +2135,12 @@ const SOUNDS = {
 };
 function playSound() { if (isQuiet()) return; if (pcLinked()) { castSend({ t: 'sound', s: db.alerts.sound }); return; } const c = audio(); if (c && SOUNDS[db.alerts.sound]) SOUNDS[db.alerts.sound](c.currentTime + 0.02); }
 
-function pickVoice() {
-  if (!('speechSynthesis' in window)) return null;
-  const vs = speechSynthesis.getVoices();
+// Ventana que habla: con la ventana flotante abierta, ella misma (visible y con tus clics); si no, esta página
+function speechWin() { try { if (window.__pip && !window.__pip.closed && window.__pip.speechSynthesis) return window.__pip; } catch (e) {} return window; }
+function pickVoice(w) {
+  w = w || window;
+  if (!('speechSynthesis' in w)) return null;
+  const vs = w.speechSynthesis.getVoices();
   return vs.find(v => v.lang === 'es-ES') || vs.find(v => v.lang.startsWith('es')) || null;
 }
 let ducked = false;
@@ -2191,20 +2194,34 @@ function speak(text, done, pause) {
     if (done) done();
   };
   if (!('speechSynthesis' in window)) return fin();
-  const u = new SpeechSynthesisUtterance(text);
+  const W = speechWin();
+  const u = new W.SpeechSynthesisUtterance(text);
   u.lang = 'es-ES';
-  const v = pickVoice(); if (v) u.voice = v;
+  const v = pickVoice(W); if (v) u.voice = v;
   if (musicPlaying()) { yt.setVolume(Math.round(M.vol * 0.25)); ducked = true; } // baja la música mientras habla
-  u.onend = fin; u.onerror = fin;
+  u.onend = fin;
+  u.onerror = e => { // si el navegador no deja hablar, se dice por qué en la pantalla del PC
+    fin();
+    if (SCREEN && e && e.error && e.error !== 'canceled' && e.error !== 'interrupted' && $('sToast')) {
+      clearTimeout(toastT);
+      $('sToast').textContent = '🔇 El navegador no ha dejado sonar la voz (' + e.error + '). Haz clic una vez en esta ventana.';
+      $('sToast').classList.remove('hidden');
+      toastT = setTimeout(() => $('sToast').classList.add('hidden'), 8000);
+    }
+  };
   safety = setTimeout(fin, 9000);
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
+  W.speechSynthesis.cancel();
+  W.speechSynthesis.speak(u);
 }
 let speechUnlocked = false;
 function unlockSound() {
   audio();
-  if (!speechUnlocked && 'speechSynthesis' in window) { // iPhone: la voz solo funciona si se activa tras un toque
-    const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); speechUnlocked = true;
+  if ('speechSynthesis' in window) { // iPhone y navegadores de PC: la voz solo funciona si se activa tras un toque (en la ventana flotante, también en ella)
+    const W = speechWin();
+    if (W === window ? !speechUnlocked : !W.__vozLista) {
+      const u = new W.SpeechSynthesisUtterance(' '); u.volume = 0; W.speechSynthesis.speak(u);
+      if (W === window) speechUnlocked = true; else W.__vozLista = true;
+    }
   }
 }
 
@@ -3339,6 +3356,8 @@ async function openPip() {
   // la ventana principal queda oculta y el navegador frena sus relojes: la cuenta atrás la lleva la ventana flotante
   w.setInterval(() => { try { scrEyeTick(); } catch (e) {} }, 500);
   w.document.body.appendChild(box);
+  w.document.addEventListener('pointerdown', () => { try { unlockSound(); if (actx && actx.state === 'suspended') actx.resume(); } catch (e) {} }, true);
+  try { unlockSound(); } catch (e) {}
   iconWatch(w.document);
   $('sPip').textContent = $('sPairPip').textContent = '🗗 Cerrar ventana flotante';
   w.addEventListener('pagehide', () => {
