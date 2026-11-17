@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v3.04</title>
+<title>Amable PC v3.05</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1730,7 +1730,7 @@
 </div>
 
 <script>
-const VERSION = 'v3.04';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v3.05';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -3767,7 +3767,7 @@ async function shareText(text) {
 // ---------- Cuenta: nombre, usuario y contraseña (de momento guardada en este dispositivo) ----------
 const ACC_KEY = 'pcbm_account', SES_KEY = 'pcbm_session', TOK_KEY = 'pcbm_token';
 // Unión automática con Grow Panel: sin botón ni recuadro (lo pone grow-panel-boton.js). Aquí solo se da la sesión y se avisa de cuándo hay una.
-const GP_UNION_ON = false; // se pone en true cuando el servidor (amable-pc-api /yo) ya devuelve «cuenta»
+const GP_UNION_ON = true; // en true desde que el servidor (amable-pc-api /yo) ya devuelve «cuenta»
 window.growPanelSesion = async () => { if (!GP_UNION_ON) return null; try { const t = localStorage.getItem(TOK_KEY); return t && /^[a-f0-9]{64}$/.test(t) ? 'pc.' + t : null; } catch (e) { return null; } };
 const gpSesionAviso = () => { if (!GP_UNION_ON) return; try { window.dispatchEvent(new Event('growpanel-sesion')); } catch (e) {} };
 if (!SCREEN && !REMOTE) { setTimeout(gpSesionAviso, 1200); window.addEventListener('load', () => setTimeout(gpSesionAviso, 1500)); } // al arrancar, también cuando ya se ha cargado el botón de Grow Panel
