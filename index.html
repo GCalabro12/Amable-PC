@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v3.07</title>
+<title>Amable PC v3.08</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -425,7 +425,9 @@
   .sellos{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
   .pi-seal,.gp-seal{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.3px;
     color:#94A3B8;border:1px solid #334155;border-radius:999px;padding:6px 12px;text-decoration:none}
-  .pi-seal::before{content:"";width:7px;height:7px;border-radius:50%;background:#4ADE80}
+  .pi-seal::before{content:"";width:18px;height:16px;flex:none;border-radius:4px;
+    background:#fff url(https://gcalabro12.github.io/Grow-Panel/logo-pi-sello.png) no-repeat center/contain}
+  html.claro .pi-seal::before { filter: invert(1) hue-rotate(180deg); } /* el modo claro invierte los colores: se devuelve al logotipo el suyo */
   .gp-seal svg{width:14px;height:14px;flex:none}
   .pi-seal:hover{border-color:#4ADE80}
   .gp-seal:hover{border-color:#8b5cf6}
@@ -1730,7 +1732,7 @@
 </div>
 
 <script>
-const VERSION = 'v3.07';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v3.08';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
