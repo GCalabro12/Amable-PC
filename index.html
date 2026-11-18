@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v3.08</title>
+<title>Amable PC v3.09</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1243,6 +1243,37 @@
     </details>
   </div>
 
+  <div class="card">
+    <details id="settings">
+      <summary>Ajustes</summary>
+      <label for="goal">Meta diaria de pasos</label>
+      <input type="number" id="goal" min="500" max="100000" step="500" inputmode="numeric">
+      <div class="row">
+        <div>
+          <label for="height">Altura (cm)</label>
+          <input type="number" id="height" min="100" max="230" inputmode="numeric">
+        </div>
+        <div>
+          <label for="weight">Peso (kg)</label>
+          <input type="number" id="weight" min="30" max="250" inputmode="numeric">
+        </div>
+      </div>
+      <div class="hint">Se usan para calcular distancia (largo de zancada) y calorías aproximadas.</div>
+      <div id="sensorBox">
+      <label class="check"><input type="checkbox" id="autoStart"> Empezar a contar solo al abrir la app</label>
+      <div class="hint">La música no puede arrancar sola: el teléfono exige tocar el botón de reproducir al menos una vez.</div>
+      <label for="sens">Sensibilidad: <span id="sensVal">5</span></label>
+      <input type="range" id="sens" min="1" max="10" step="1">
+      <div class="hint">Si cuenta de menos, súbela. Si cuenta pasos estando quieto, bájala. La línea amarilla es el umbral: cada pico que la cruza es un paso.</div>
+      <canvas id="signal" width="440" height="80"></canvas>
+      </div>
+      <div class="row mt">
+        <div><button class="btn-outline" id="addBtn">+100 pasos</button></div>
+        <div><button class="btn-outline" id="resetBtn">Reiniciar hoy</button></div>
+      </div>
+    </details>
+  </div>
+
   <div class="card" id="walkSchedCard">
     <details open>
     <summary>🎯 Objetivos de pasos por hora</summary>
@@ -1343,37 +1374,6 @@
       <span>Media: <b id="weekAvg">0</b>/día</span>
       <span>Metas: <b id="weekMet">0</b>/7</span>
     </div>
-    </details>
-  </div>
-
-  <div class="card">
-    <details id="settings">
-      <summary>Ajustes</summary>
-      <label for="goal">Meta diaria de pasos</label>
-      <input type="number" id="goal" min="500" max="100000" step="500" inputmode="numeric">
-      <div class="row">
-        <div>
-          <label for="height">Altura (cm)</label>
-          <input type="number" id="height" min="100" max="230" inputmode="numeric">
-        </div>
-        <div>
-          <label for="weight">Peso (kg)</label>
-          <input type="number" id="weight" min="30" max="250" inputmode="numeric">
-        </div>
-      </div>
-      <div class="hint">Se usan para calcular distancia (largo de zancada) y calorías aproximadas.</div>
-      <div id="sensorBox">
-      <label class="check"><input type="checkbox" id="autoStart"> Empezar a contar solo al abrir la app</label>
-      <div class="hint">La música no puede arrancar sola: el teléfono exige tocar el botón de reproducir al menos una vez.</div>
-      <label for="sens">Sensibilidad: <span id="sensVal">5</span></label>
-      <input type="range" id="sens" min="1" max="10" step="1">
-      <div class="hint">Si cuenta de menos, súbela. Si cuenta pasos estando quieto, bájala. La línea amarilla es el umbral: cada pico que la cruza es un paso.</div>
-      <canvas id="signal" width="440" height="80"></canvas>
-      </div>
-      <div class="row mt">
-        <div><button class="btn-outline" id="addBtn">+100 pasos</button></div>
-        <div><button class="btn-outline" id="resetBtn">Reiniciar hoy</button></div>
-      </div>
     </details>
   </div>
 
@@ -1732,7 +1732,7 @@
 </div>
 
 <script>
-const VERSION = 'v3.08';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v3.09';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
