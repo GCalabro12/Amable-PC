@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v3.09</title>
+<title>Amable PC v3.10</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -1732,7 +1732,7 @@
 </div>
 
 <script>
-const VERSION = 'v3.09';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v3.10';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
@@ -2086,7 +2086,7 @@ function nativeStatus() {
 }
 // Aviso de app Android nueva (como en Amable Fit): al abrir la app, si la instalada es más vieja que la última publicada, ofrece descargarla.
 // Súbelo cada vez que se publique un APK con cambios nativos (junto con el archivo VERSION del repo del APK).
-const APK_ULTIMA = '2.69';
+const APK_ULTIMA = '2.70';
 const verMenor = (a, b) => { const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number); for (let i = 0; i < Math.max(x.length, y.length); i++) { const p = x[i] || 0, q = y[i] || 0; if (p !== q) return p < q; } return false; };
 function apkAviso() {
   let v = '';
@@ -4108,6 +4108,8 @@ function softTone(freq, start, dur, vol, dest) {
   o.connect(g).connect(dest);
   o.start(start); o.stop(start + dur + 0.1);
 }
+// Volumen de la musiquita de la pausa de vista (antes sonaba muy bajito: 0,04 y 0,05); 1 = el nuevo volumen
+const RELAX_VOL = 1;
 function startRelax() {
   const c = audio(); if (!c) return;
   stopRelax();
@@ -4115,8 +4117,8 @@ function startRelax() {
   const chords = [['C4', 'E4', 'G4', 'B4'], ['A3', 'C4', 'E4', 'G4'], ['F3', 'A3', 'C4', 'E4'], ['G3', 'B3', 'D4', 'E4']];
   const bells = ['E5', 'G5', 'A5', 'C6', 'D6', 'E6'];
   let i = 0;
-  const pad = () => { const t = c.currentTime + 0.05; chords[i++ % chords.length].forEach(n => softTone(NOTE(n), t, 4.3, 0.04, master)); };
-  const bell = () => { if (Math.random() < 0.65) tone(NOTE(bells[Math.floor(Math.random() * bells.length)]), c.currentTime + 0.02, 2.4, 'sine', 0.05, master); };
+  const pad = () => { const t = c.currentTime + 0.05; chords[i++ % chords.length].forEach(n => softTone(NOTE(n), t, 4.3, RELAX_VOL * 0.11, master)); };
+  const bell = () => { if (Math.random() < 0.65) tone(NOTE(bells[Math.floor(Math.random() * bells.length)]), c.currentTime + 0.02, 2.4, 'sine', RELAX_VOL * 0.13, master); };
   pad(); bell();
   relax = { master, a: setInterval(pad, 4000), b: setInterval(bell, 850) };
 }

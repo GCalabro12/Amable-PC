@@ -1,6 +1,6 @@
 // Service worker de Amable PC: primero la red (siempre la versión nueva) y, sin conexión, la copia guardada.
 // Receta de autoactualización de Amable Sleep. La versión de CACHE la sube publicar.py en cada publicación.
-const CACHE = 'amablepc-v3.09';
+const CACHE = 'amablepc-v3.10';
 const CORE = ['./', './index.html', './correo.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
