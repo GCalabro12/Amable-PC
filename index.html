@@ -11,7 +11,7 @@
 <script>document.write('<link rel="manifest" href="' + (location.search.indexOf('pantalla') >= 0 ? 'manifest-pantalla.json' : 'manifest.json') + '">');</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Amable PC v3.12</title>
+<title>Amable PC v3.13</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
@@ -427,7 +427,7 @@
     color:#94A3B8;border:1px solid #334155;border-radius:999px;padding:6px 12px;text-decoration:none}
   .pi-seal::before{content:"";width:18px;height:16px;flex:none;border-radius:4px;
     background:#fff url(https://gcalabro12.github.io/Grow-Panel/logo-pi-sello.png) no-repeat center/contain}
-  html.claro .pi-seal::before { filter: invert(1) hue-rotate(180deg); } /* el modo claro invierte los colores: se devuelve al logotipo el suyo */
+  html.claro .pi-seal::before { background-color: transparent; filter: invert(1) hue-rotate(180deg); } /* modo claro: sin el cuadrado blanco (regla de Grow Panel, 18-11-2026) y se devuelve al logotipo su color */
   .gp-seal svg{width:14px;height:14px;flex:none}
   .pi-seal:hover{border-color:#4ADE80}
   .gp-seal:hover{border-color:#8b5cf6}
@@ -1732,7 +1732,7 @@
 </div>
 
 <script>
-const VERSION = 'v3.12';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
+const VERSION = 'v3.13';   // v2.80: id de instalación nuevo (manifest) para poder reinstalar en Chrome
 const KEY = 'pasos_app_v1';
 const DEFAULTS = { goal: 8000, height: 170, weight: 70, sens: 5, autoStart: true };
 const MUSIC_DEFAULT = { id: '0XMpdr42Gcs', pos: 1018, vol: 80, auto: true };
